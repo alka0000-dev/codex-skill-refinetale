@@ -1,0 +1,558 @@
+diff --git a/frontend/src/components/Common/MultiStepFormWizard.tsx b/frontend/src/components/Common/MultiStepFormWizard.tsx
+new file mode 100644
+index 0000000..06c9e52
+--- /dev/null
++++ b/frontend/src/components/Common/MultiStepFormWizard.tsx
+@@ -0,0 +1,516 @@
++import { zodResolver } from "@hookform/resolvers/zod"
++import {
++  ArrowLeft,
++  ArrowRight,
++  Check,
++  CheckCircle2,
++  Rocket,
++  Sparkles,
++  Users,
++} from "lucide-react"
++import { type FormEvent, useEffect, useRef, useState } from "react"
++import { useForm } from "react-hook-form"
++import { z } from "zod"
++
++import { Button } from "@/components/ui/button"
++import { Card, CardContent } from "@/components/ui/card"
++import {
++  Form,
++  FormControl,
++  FormField,
++  FormItem,
++  FormLabel,
++  FormMessage,
++} from "@/components/ui/form"
++import { Input } from "@/components/ui/input"
++import { cn } from "@/lib/utils"
++
++const wizardSchema = z.object({
++  fullName: z.string().trim().min(2, "Enter your full name"),
++  role: z.string().min(1, "Choose your role"),
++  workspaceName: z.string().trim().min(2, "Enter a workspace name"),
++  teamSize: z.string().min(1, "Choose a team size"),
++  goals: z.array(z.string()).min(1, "Choose at least one goal"),
++  productUpdates: z.boolean(),
++})
++
++type WizardFormData = z.infer<typeof wizardSchema>
++type WizardFieldName = keyof WizardFormData
++
++interface MultiStepFormWizardProps {
++  initialFullName?: string
++  onComplete?: (formData: WizardFormData) => void
++}
++
++const steps = [
++  {
++    eyebrow: "Personal details",
++    title: "Tell us about yourself",
++    description: "A few details help us tailor your workspace experience.",
++    fields: ["fullName", "role"] satisfies WizardFieldName[],
++  },
++  {
++    eyebrow: "Your workspace",
++    title: "Set up your team",
++    description:
++      "Create a home for your projects and the people you work with.",
++    fields: ["workspaceName", "teamSize"] satisfies WizardFieldName[],
++  },
++  {
++    eyebrow: "Your goals",
++    title: "What are you here to do?",
++    description: "Pick the areas that matter most. You can change these later.",
++    fields: ["goals", "productUpdates"] satisfies WizardFieldName[],
++  },
++] as const
++
++const teamSizes = ["Just me", "2–10", "11–50", "51+"]
++
++const goalOptions = [
++  {
++    value: "plan-projects",
++    title: "Plan projects",
++    description: "Keep work clear and on schedule.",
++    icon: Rocket,
++  },
++  {
++    value: "collaborate",
++    title: "Collaborate",
++    description: "Bring teammates and ideas together.",
++    icon: Users,
++  },
++  {
++    value: "organize-work",
++    title: "Organize work",
++    description: "Build a calmer, focused workflow.",
++    icon: Sparkles,
++  },
++]
++
++export function MultiStepFormWizard({
++  initialFullName = "",
++  onComplete,
++}: MultiStepFormWizardProps) {
++  const [currentStepIndex, setCurrentStepIndex] = useState(0)
++  const [isComplete, setIsComplete] = useState(false)
++  const stepHeadingRef = useRef<HTMLHeadingElement>(null)
++  const form = useForm<WizardFormData>({
++    resolver: zodResolver(wizardSchema),
++    mode: "onBlur",
++    defaultValues: {
++      fullName: initialFullName,
++      role: "",
++      workspaceName: "",
++      teamSize: "",
++      goals: [],
++      productUpdates: true,
++    },
++  })
++
++  const currentStep = steps[currentStepIndex]
++  const progressPercentage = ((currentStepIndex + 1) / steps.length) * 100
++
++  useEffect(() => {
++    if (currentStepIndex > 0) {
++      stepHeadingRef.current?.focus()
++    }
++  }, [currentStepIndex])
++
++  const handleNext = async () => {
++    const isStepValid = await form.trigger(currentStep.fields)
++
++    if (isStepValid && currentStepIndex < steps.length - 1) {
++      setCurrentStepIndex((stepIndex) => stepIndex + 1)
++    }
++  }
++
++  const handleBack = () => {
++    setCurrentStepIndex((stepIndex) => Math.max(0, stepIndex - 1))
++  }
++
++  const handleGoalToggle = (goal: string) => {
++    const selectedGoals = form.getValues("goals")
++    const updatedGoals = selectedGoals.includes(goal)
++      ? selectedGoals.filter((selectedGoal) => selectedGoal !== goal)
++      : [...selectedGoals, goal]
++
++    form.setValue("goals", updatedGoals, {
++      shouldDirty: true,
++      shouldTouch: true,
++      shouldValidate: true,
++    })
++  }
++
++  const handleSubmit = (formData: WizardFormData) => {
++    onComplete?.(formData)
++    setIsComplete(true)
++  }
++
++  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
++    event.preventDefault()
++
++    if (currentStepIndex === steps.length - 1) {
++      void form.handleSubmit(handleSubmit)(event)
++      return
++    }
++
++    void handleNext()
++  }
++
++  const handleStartOver = () => {
++    form.reset()
++    setCurrentStepIndex(0)
++    setIsComplete(false)
++  }
++
++  if (isComplete) {
++    return (
++      <Card className="overflow-hidden border-primary/20 shadow-lg shadow-primary/5">
++        <CardContent className="flex min-h-[34rem] flex-col items-center justify-center px-6 py-16 text-center sm:px-12">
++          <div className="mb-6 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
++            <CheckCircle2 className="size-8" aria-hidden="true" />
++          </div>
++          <p className="mb-2 text-sm font-semibold tracking-wide text-primary uppercase">
++            You&apos;re all set
++          </p>
++          <h2 className="max-w-md text-3xl font-semibold tracking-tight sm:text-4xl">
++            Your workspace is ready
++          </h2>
++          <p className="mt-4 max-w-lg text-balance text-muted-foreground">
++            Everything is configured. You can now invite your team and start
++            turning plans into progress.
++          </p>
++          <Button type="button" className="mt-8" onClick={handleStartOver}>
++            Create another workspace
++            <ArrowRight aria-hidden="true" />
++          </Button>
++        </CardContent>
++      </Card>
++    )
++  }
++
++  return (
++    <Card className="overflow-hidden p-0 shadow-lg shadow-black/5">
++      <div className="grid min-h-[38rem] lg:grid-cols-[18rem_1fr]">
++        <aside className="relative overflow-hidden bg-zinc-950 p-6 text-white sm:p-8">
++          <div className="absolute -top-20 -right-20 size-56 rounded-full bg-primary/20 blur-3xl" />
++          <div className="relative flex h-full flex-col">
++            <div>
++              <div className="mb-8 flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
++                <Sparkles className="size-5" aria-hidden="true" />
++              </div>
++              <p className="text-xs font-semibold tracking-[0.18em] text-zinc-400 uppercase">
++                Quick setup
++              </p>
++              <h2 className="mt-2 text-xl font-semibold">
++                Build your workspace
++              </h2>
++              <p className="mt-2 text-sm leading-6 text-zinc-400">
++                Three simple steps. About two minutes.
++              </p>
++            </div>
++
++            <nav className="mt-10" aria-label="Setup progress">
++              <ol className="space-y-1">
++                {steps.map((step, stepIndex) => {
++                  const isActive = stepIndex === currentStepIndex
++                  const isFinished = stepIndex < currentStepIndex
++
++                  return (
++                    <li key={step.title}>
++                      <div
++                        className={cn(
++                          "flex items-center gap-3 rounded-lg px-2 py-2.5 text-sm transition-colors",
++                          isActive && "bg-white/10 text-white",
++                          !isActive && "text-zinc-400",
++                        )}
++                        aria-current={isActive ? "step" : undefined}
++                      >
++                        <span
++                          className={cn(
++                            "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
++                            isActive &&
++                              "border-primary bg-primary text-primary-foreground",
++                            isFinished &&
++                              "border-primary bg-primary/15 text-primary",
++                            !isActive && !isFinished && "border-zinc-700",
++                          )}
++                        >
++                          {isFinished ? (
++                            <Check className="size-3.5" aria-hidden="true" />
++                          ) : (
++                            stepIndex + 1
++                          )}
++                        </span>
++                        <span>{step.eyebrow}</span>
++                      </div>
++                    </li>
++                  )
++                })}
++              </ol>
++            </nav>
++
++            <p className="mt-auto hidden pt-10 text-xs leading-5 text-zinc-500 lg:block">
++              Your answers are saved while you move between steps.
++            </p>
++          </div>
++        </aside>
++
++        <div className="flex min-w-0 flex-col">
++          <div className="h-1 bg-muted" aria-hidden="true">
++            <div
++              className="h-full bg-primary transition-[width] duration-300 motion-reduce:transition-none"
++              style={{ width: `${progressPercentage}%` }}
++            />
++          </div>
++
++          <Form {...form}>
++            <form className="flex flex-1 flex-col" onSubmit={handleFormSubmit}>
++              <div
++                key={currentStep.title}
++                className="flex-1 animate-in px-6 py-9 duration-300 fade-in slide-in-from-bottom-2 motion-reduce:animate-none sm:px-10 sm:py-12"
++              >
++                <p className="text-sm font-medium text-primary">
++                  Step {currentStepIndex + 1} of {steps.length}
++                </p>
++                <h2
++                  ref={stepHeadingRef}
++                  tabIndex={-1}
++                  className="mt-2 text-2xl font-semibold tracking-tight outline-none sm:text-3xl"
++                >
++                  {currentStep.title}
++                </h2>
++                <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
++                  {currentStep.description}
++                </p>
++
++                <div className="mt-9 max-w-2xl">
++                  {currentStepIndex === 0 && (
++                    <div className="grid gap-6 sm:grid-cols-2">
++                      <FormField
++                        control={form.control}
++                        name="fullName"
++                        render={({ field }) => (
++                          <FormItem>
++                            <FormLabel>Full name</FormLabel>
++                            <FormControl>
++                              <Input
++                                type="text"
++                                placeholder="Alex Morgan"
++                                autoComplete="name"
++                                {...field}
++                              />
++                            </FormControl>
++                            <FormMessage />
++                          </FormItem>
++                        )}
++                      />
++                      <FormField
++                        control={form.control}
++                        name="role"
++                        render={({ field }) => (
++                          <FormItem>
++                            <FormLabel>Role</FormLabel>
++                            <FormControl>
++                              <select
++                                className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
++                                {...field}
++                              >
++                                <option value="" disabled>
++                                  Select your role
++                                </option>
++                                <option value="founder">Founder</option>
++                                <option value="product">Product</option>
++                                <option value="design">Design</option>
++                                <option value="engineering">Engineering</option>
++                                <option value="operations">Operations</option>
++                                <option value="other">Other</option>
++                              </select>
++                            </FormControl>
++                            <FormMessage />
++                          </FormItem>
++                        )}
++                      />
++                    </div>
++                  )}
++
++                  {currentStepIndex === 1 && (
++                    <div className="space-y-7">
++                      <FormField
++                        control={form.control}
++                        name="workspaceName"
++                        render={({ field }) => (
++                          <FormItem>
++                            <FormLabel>Workspace name</FormLabel>
++                            <FormControl>
++                              <Input
++                                type="text"
++                                placeholder="Acme Studio"
++                                autoComplete="organization"
++                                {...field}
++                              />
++                            </FormControl>
++                            <FormMessage />
++                          </FormItem>
++                        )}
++                      />
++                      <FormField
++                        control={form.control}
++                        name="teamSize"
++                        render={({ field }) => (
++                          <FormItem>
++                            <fieldset>
++                              <FormLabel asChild>
++                                <legend>Team size</legend>
++                              </FormLabel>
++                              <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
++                                {teamSizes.map((teamSize) => (
++                                  <button
++                                    key={teamSize}
++                                    type="button"
++                                    className={cn(
++                                      "rounded-lg border px-3 py-3 text-sm font-medium transition-colors hover:border-primary/60 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
++                                      field.value === teamSize &&
++                                        "border-primary bg-primary/10 text-primary",
++                                    )}
++                                    aria-pressed={field.value === teamSize}
++                                    onClick={() => field.onChange(teamSize)}
++                                  >
++                                    {teamSize}
++                                  </button>
++                                ))}
++                              </div>
++                            </fieldset>
++                            <FormMessage />
++                          </FormItem>
++                        )}
++                      />
++                    </div>
++                  )}
++
++                  {currentStepIndex === 2 && (
++                    <div className="space-y-7">
++                      <FormField
++                        control={form.control}
++                        name="goals"
++                        render={({ field, fieldState }) => (
++                          <FormItem>
++                            <fieldset>
++                              <legend className="sr-only">
++                                Workspace goals
++                              </legend>
++                              <div className="grid gap-3 sm:grid-cols-3">
++                                {goalOptions.map((goal) => {
++                                  const isSelected = field.value.includes(
++                                    goal.value,
++                                  )
++
++                                  return (
++                                    <button
++                                      key={goal.value}
++                                      type="button"
++                                      className={cn(
++                                        "relative rounded-xl border p-4 text-left transition-colors hover:border-primary/60 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
++                                        isSelected &&
++                                          "border-primary bg-primary/10",
++                                      )}
++                                      aria-pressed={isSelected}
++                                      onClick={() =>
++                                        handleGoalToggle(goal.value)
++                                      }
++                                    >
++                                      {isSelected && (
++                                        <span className="absolute top-3 right-3 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
++                                          <Check
++                                            className="size-3"
++                                            aria-hidden="true"
++                                          />
++                                        </span>
++                                      )}
++                                      <goal.icon
++                                        className="mb-6 size-5 text-primary"
++                                        aria-hidden="true"
++                                      />
++                                      <span className="block text-sm font-semibold">
++                                        {goal.title}
++                                      </span>
++                                      <span className="mt-1 block text-xs leading-5 text-muted-foreground">
++                                        {goal.description}
++                                      </span>
++                                    </button>
++                                  )
++                                })}
++                              </div>
++                            </fieldset>
++                            {fieldState.error && (
++                              <p
++                                className="text-sm text-destructive"
++                                role="alert"
++                              >
++                                {fieldState.error.message}
++                              </p>
++                            )}
++                          </FormItem>
++                        )}
++                      />
++
++                      <FormField
++                        control={form.control}
++                        name="productUpdates"
++                        render={({ field }) => (
++                          <FormItem>
++                            <label className="flex cursor-pointer items-start gap-3 rounded-lg border bg-muted/30 p-4">
++                              <input
++                                type="checkbox"
++                                className="mt-0.5 size-4 accent-primary"
++                                checked={field.value}
++                                onChange={field.onChange}
++                              />
++                              <span>
++                                <span className="block text-sm font-medium">
++                                  Send me practical product tips
++                                </span>
++                                <span className="mt-1 block text-xs leading-5 text-muted-foreground">
++                                  Occasional guidance to help your team get more
++                                  from the workspace.
++                                </span>
++                              </span>
++                            </label>
++                          </FormItem>
++                        )}
++                      />
++                    </div>
++                  )}
++                </div>
++              </div>
++
++              <div className="flex items-center justify-between gap-4 border-t px-6 py-5 sm:px-10">
++                <Button
++                  type="button"
++                  variant="ghost"
++                  onClick={handleBack}
++                  disabled={currentStepIndex === 0}
++                  className={cn(currentStepIndex === 0 && "invisible")}
++                >
++                  <ArrowLeft aria-hidden="true" />
++                  Back
++                </Button>
++                {currentStepIndex === steps.length - 1 ? (
++                  <Button type="submit">
++                    Complete setup
++                    <Check aria-hidden="true" />
++                  </Button>
++                ) : (
++                  <Button type="button" onClick={handleNext}>
++                    Continue
++                    <ArrowRight aria-hidden="true" />
++                  </Button>
++                )}
++              </div>
++            </form>
++          </Form>
++        </div>
++      </div>
++    </Card>
++  )
++}
+diff --git a/frontend/src/routes/_layout/index.tsx b/frontend/src/routes/_layout/index.tsx
+index 3e640cb..fba9ce1 100644
+--- a/frontend/src/routes/_layout/index.tsx
++++ b/frontend/src/routes/_layout/index.tsx
+@@ -1,5 +1,6 @@
+ import { createFileRoute } from "@tanstack/react-router"
+ 
++import { MultiStepFormWizard } from "@/components/Common/MultiStepFormWizard"
+ import useAuth from "@/hooks/useAuth"
+ 
+ export const Route = createFileRoute("/_layout/")({
+@@ -17,15 +18,18 @@ function Dashboard() {
+   const { user: currentUser } = useAuth()
+ 
+   return (
+-    <div>
+-      <div>
+-        <h1 className="text-2xl truncate max-w-sm">
+-          Hi, {currentUser?.full_name || currentUser?.email} 👋
++    <div className="space-y-8">
++      <div className="max-w-2xl">
++        <p className="text-sm font-medium text-primary">Welcome aboard</p>
++        <h1 className="mt-1 text-3xl font-semibold tracking-tight">
++          Let&apos;s get you set up
+         </h1>
+-        <p className="text-muted-foreground">
+-          Welcome back, nice to see you again!!!
++        <p className="mt-2 text-muted-foreground">
++          Create a workspace that fits how you and your team like to work.
+         </p>
+       </div>
++
++      <MultiStepFormWizard initialFullName={currentUser?.full_name ?? ""} />
+     </div>
+   )
+ }

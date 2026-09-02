@@ -1,0 +1,88 @@
+{
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F"
+            ]
+          },
+          "S1": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "S2": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "S3": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "S4": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "S5": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "borderline",
+              "fail",
+              "critical_failure"
+            ]
+          },
+          "critical_failure": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "total",
+          "outcome",
+          "critical_failure",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "candidates"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,100 @@
+diff --git a/frontend/src/components/ui/file-dropzone.tsx b/frontend/src/components/ui/file-dropzone.tsx
+new file mode 100644
+index 0000000..6fce1ca
+--- /dev/null
++++ b/frontend/src/components/ui/file-dropzone.tsx
+@@ -0,0 +1,94 @@
++import * as React from "react"
++import { Upload } from "lucide-react"
++
++import { cn } from "@/lib/utils"
++
++type FileDropzoneProps = Omit<
++  React.ComponentProps<"input">,
++  "children" | "className" | "multiple" | "onChange" | "type"
++> & {
++  className?: string
++  multiple?: boolean
++  onFilesSelected: (files: File[]) => void
++}
++
++function FileDropzone({
++  className,
++  disabled,
++  multiple = false,
++  onFilesSelected,
++  ...props
++}: FileDropzoneProps) {
++  const [isDragging, setIsDragging] = React.useState(false)
++
++  const selectFiles = (files: FileList) => {
++    const selectedFiles = Array.from(files)
++    onFilesSelected(multiple ? selectedFiles : selectedFiles.slice(0, 1))
++  }
++
++  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
++    if (event.target.files) {
++      selectFiles(event.target.files)
++    }
++  }
++
++  const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++
++    if (!disabled) {
++      setIsDragging(true)
++    }
++  }
++
++  const handleDragLeave = () => {
++    setIsDragging(false)
++  }
++
++  const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    setIsDragging(false)
++
++    if (!disabled && event.dataTransfer.files.length > 0) {
++      selectFiles(event.dataTransfer.files)
++    }
++  }
++
++  return (
++    <label
++      data-slot="file-dropzone"
++      data-dragging={isDragging || undefined}
++      className={cn(
++        "flex min-h-48 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-input bg-transparent p-6 text-center transition-colors",
++        "hover:border-ring hover:bg-muted/50 focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
++        "data-[dragging]:border-primary data-[dragging]:bg-primary/5",
++        "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[:disabled]:hover:border-input has-[:disabled]:hover:bg-transparent",
++        className
++      )}
++      onDragLeave={handleDragLeave}
++      onDragOver={handleDragOver}
++      onDrop={handleDrop}
++    >
++      <input
++        type="file"
++        className="sr-only"
++        disabled={disabled}
++        multiple={multiple}
++        onChange={handleChange}
++        {...props}
++      />
++      <span className="rounded-full bg-muted p-3">
++        <Upload className="size-6 text-muted-foreground" aria-hidden="true" />
++      </span>
++      <span className="space-y-1">
++        <span className="block text-sm font-medium">
++          Drop files here or click to browse
++        </span>
++        <span className="block text-xs text-muted-foreground">
++          {multiple ? "Select one or more files" : "Select a file"}
++        </span>
++      </span>
++    </label>
++  )
++}
++
++export { FileDropzone, type FileDropzoneProps }

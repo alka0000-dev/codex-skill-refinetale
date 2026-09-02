@@ -1,0 +1,283 @@
+diff --git a/frontend/src/components/Common/CommandPalette.tsx b/frontend/src/components/Common/CommandPalette.tsx
+new file mode 100644
+index 0000000..e297f3a
+--- /dev/null
++++ b/frontend/src/components/Common/CommandPalette.tsx
+@@ -0,0 +1,258 @@
++import { useNavigate } from "@tanstack/react-router"
++import {
++  ArrowDown,
++  ArrowUp,
++  Briefcase,
++  CornerDownLeft,
++  Home,
++  type LucideIcon,
++  Search,
++  Settings,
++  Users,
++} from "lucide-react"
++import { useEffect, useMemo, useState } from "react"
++
++import { Button } from "@/components/ui/button"
++import {
++  Dialog,
++  DialogContent,
++  DialogDescription,
++  DialogTitle,
++  DialogTrigger,
++} from "@/components/ui/dialog"
++import useAuth from "@/hooks/useAuth"
++import { cn } from "@/lib/utils"
++
++interface Command {
++  id: string
++  icon: LucideIcon
++  label: string
++  description: string
++  searchTerms: string[]
++  run: () => void
++}
++
++export function CommandPalette() {
++  const navigate = useNavigate()
++  const { user: currentUser } = useAuth()
++  const [isOpen, setIsOpen] = useState(false)
++  const [query, setQuery] = useState("")
++  const [selectedIndex, setSelectedIndex] = useState(0)
++
++  const commands = useMemo<Command[]>(
++    () => [
++      {
++        id: "dashboard",
++        icon: Home,
++        label: "Dashboard",
++        description: "Go to your dashboard",
++        searchTerms: ["dashboard", "home", "overview"],
++        run: () => navigate({ to: "/" }),
++      },
++      {
++        id: "items",
++        icon: Briefcase,
++        label: "Items",
++        description: "View and manage items",
++        searchTerms: ["items", "manage", "list"],
++        run: () => navigate({ to: "/items" }),
++      },
++      {
++        id: "settings",
++        icon: Settings,
++        label: "User Settings",
++        description: "Manage your account settings",
++        searchTerms: ["settings", "account", "profile", "password"],
++        run: () => navigate({ to: "/settings" }),
++      },
++      ...(currentUser?.is_superuser
++        ? [
++            {
++              id: "admin",
++              icon: Users,
++              label: "Admin",
++              description: "Manage users",
++              searchTerms: ["admin", "users", "manage"],
++              run: () => navigate({ to: "/admin" }),
++            },
++          ]
++        : []),
++    ],
++    [currentUser?.is_superuser, navigate],
++  )
++
++  const normalizedQuery = query.trim().toLocaleLowerCase()
++  const filteredCommands = commands.filter(
++    (command) =>
++      normalizedQuery.length === 0 ||
++      [command.label, command.description, ...command.searchTerms]
++        .join(" ")
++        .toLocaleLowerCase()
++        .includes(normalizedQuery),
++  )
++
++  useEffect(() => {
++    const handleShortcut = (event: KeyboardEvent) => {
++      if (
++        event.key.toLocaleLowerCase() === "k" &&
++        (event.metaKey || event.ctrlKey)
++      ) {
++        event.preventDefault()
++        setIsOpen((isCurrentlyOpen) => !isCurrentlyOpen)
++      }
++    }
++
++    document.addEventListener("keydown", handleShortcut)
++    return () => document.removeEventListener("keydown", handleShortcut)
++  }, [])
++
++  useEffect(() => {
++    if (!isOpen) {
++      setQuery("")
++      setSelectedIndex(0)
++    }
++  }, [isOpen])
++
++  const runCommand = (command: Command) => {
++    command.run()
++    setIsOpen(false)
++  }
++
++  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
++    if (filteredCommands.length === 0 || event.nativeEvent.isComposing) {
++      return
++    }
++
++    if (event.key === "ArrowDown") {
++      event.preventDefault()
++      setSelectedIndex((currentIndex) =>
++        currentIndex === filteredCommands.length - 1 ? 0 : currentIndex + 1,
++      )
++    }
++
++    if (event.key === "ArrowUp") {
++      event.preventDefault()
++      setSelectedIndex((currentIndex) =>
++        currentIndex === 0 ? filteredCommands.length - 1 : currentIndex - 1,
++      )
++    }
++
++    if (event.key === "Enter") {
++      event.preventDefault()
++      const selectedCommand = filteredCommands[selectedIndex]
++      if (selectedCommand) {
++        runCommand(selectedCommand)
++      }
++    }
++  }
++
++  return (
++    <Dialog open={isOpen} onOpenChange={setIsOpen}>
++      <DialogTrigger asChild>
++        <Button
++          type="button"
++          variant="outline"
++          className="ml-auto h-9 w-9 justify-center p-0 text-muted-foreground shadow-none sm:w-full sm:max-w-64 sm:justify-start sm:px-3"
++          aria-label="Open command palette"
++        >
++          <Search className="size-4" />
++          <span className="hidden sm:inline">Search commands</span>
++          <kbd className="ml-auto hidden rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium sm:inline-flex">
++            ⌘K
++          </kbd>
++        </Button>
++      </DialogTrigger>
++      <DialogContent
++        className="top-[20%] max-w-xl translate-y-0 gap-0 overflow-hidden p-0"
++        showCloseButton={false}
++      >
++        <DialogTitle className="sr-only">Command palette</DialogTitle>
++        <DialogDescription className="sr-only">
++          Search for a command, then use the arrow keys and Enter to run it.
++        </DialogDescription>
++        <div className="flex items-center gap-3 border-b px-4">
++          <Search className="size-5 shrink-0 text-muted-foreground" />
++          <input
++            type="search"
++            role="combobox"
++            aria-autocomplete="list"
++            aria-controls="command-palette-results"
++            aria-expanded={isOpen}
++            aria-activedescendant={
++              filteredCommands[selectedIndex]
++                ? `command-${filteredCommands[selectedIndex].id}`
++                : undefined
++            }
++            autoComplete="off"
++            autoFocus
++            className="h-14 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
++            placeholder="Type a command or search…"
++            value={query}
++            onChange={(event) => {
++              setQuery(event.target.value)
++              setSelectedIndex(0)
++            }}
++            onKeyDown={handleInputKeyDown}
++          />
++        </div>
++        <div
++          id="command-palette-results"
++          role="listbox"
++          aria-label="Commands"
++          className="max-h-80 overflow-y-auto p-2"
++        >
++          {filteredCommands.length > 0 ? (
++            filteredCommands.map((command, index) => {
++              const Icon = command.icon
++              const isSelected = index === selectedIndex
++
++              return (
++                <button
++                  id={`command-${command.id}`}
++                  key={command.id}
++                  type="button"
++                  role="option"
++                  aria-selected={isSelected}
++                  tabIndex={-1}
++                  className={cn(
++                    "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm outline-none",
++                    isSelected && "bg-accent text-accent-foreground",
++                  )}
++                  onClick={() => runCommand(command)}
++                  onPointerMove={() => setSelectedIndex(index)}
++                >
++                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-background">
++                    <Icon className="size-4" />
++                  </span>
++                  <span className="min-w-0 flex-1">
++                    <span className="block font-medium">{command.label}</span>
++                    <span className="block truncate text-xs text-muted-foreground">
++                      {command.description}
++                    </span>
++                  </span>
++                  {isSelected && (
++                    <CornerDownLeft className="size-4 text-muted-foreground" />
++                  )}
++                </button>
++              )
++            })
++          ) : (
++            <p className="px-3 py-10 text-center text-sm text-muted-foreground">
++              No commands found.
++            </p>
++          )}
++        </div>
++        <div className="flex items-center gap-4 border-t bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
++          <span className="flex items-center gap-1">
++            <ArrowUp className="size-3" />
++            <ArrowDown className="size-3" /> navigate
++          </span>
++          <span className="flex items-center gap-1">
++            <CornerDownLeft className="size-3" /> select
++          </span>
++          <span className="ml-auto">esc close</span>
++        </div>
++      </DialogContent>
++    </Dialog>
++  )
++}
+diff --git a/frontend/src/routes/_layout.tsx b/frontend/src/routes/_layout.tsx
+index 1697305..10fb072 100644
+--- a/frontend/src/routes/_layout.tsx
++++ b/frontend/src/routes/_layout.tsx
+@@ -1,5 +1,6 @@
+ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+ 
++import { CommandPalette } from "@/components/Common/CommandPalette"
+ import { Footer } from "@/components/Common/Footer"
+ import AppSidebar from "@/components/Sidebar/AppSidebar"
+ import {
+@@ -27,6 +28,7 @@ function Layout() {
+       <SidebarInset>
+         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4">
+           <SidebarTrigger className="-ml-1 text-muted-foreground" />
++          <CommandPalette />
+         </header>
+         <main className="flex-1 p-6 md:p-8">
+           <div className="mx-auto max-w-7xl">

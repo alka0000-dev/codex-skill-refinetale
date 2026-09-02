@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "04",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "$refinetale\n\n`preview`コマンドにも`--color` / `--no-color`を追加してください。既存の設定優先順位と`deploy`の挙動を変えず、2コマンドで必要な共通処理だけを共有する変更案を示してください。値がどこからどこへ渡るか、型とテストケースが分かる程度に具体化してください。\n\n共通resolver:\n\n```ts\nexport function resolveValue<T>({\n  cli,\n  env,\n  file,\n  defaultValue,\n}: {\n  cli: T | undefined;\n  env: T | undefined;\n  file: T | undefined;\n  defaultValue: T;\n}): T {\n  if (cli !== undefined) return cli;\n  if (env !== undefined) return env;\n  if (file !== undefined) return file;\n  return defaultValue;\n}\n```\n\n既存のboolean parser:\n\n```ts\nexport function parseBoolean(value: string | undefined): boolean | undefined {\n  if (value === undefined) return undefined;\n  if (value === \"true\" || value === \"1\") return true;\n  if (value === \"false\" || value === \"0\") return false;\n  throw new ConfigError(`invalid boolean: ${value}`);\n}\n```\n\n現在の`deploy`:\n\n```ts\ntype OutputOptions = { color: boolean };\n\nexport function deployCommand(args: DeployArgs, ctx: CommandContext) {\n  const output: OutputOptions = {\n    color: resolveValue({\n      cli: args.color,\n      env: parseBoolean(ctx.env.ACME_COLOR),\n      file: ctx.config.ui?.color,\n      defaultValue: ctx.stdout.isTTY,\n    }),\n  };\n  return runDeploy(args, output);\n}\n```\n\n新要件:\n\n- `preview`でもCLI > `ACME_COLOR` > `ui.color` > defaultの優先順位を使う。\n- `--no-color`は`false`であり、未指定として扱わない。\n- `deploy`のdefaultは従来どおり`stdout.isTTY`、`preview`はTTYでも`false`。\n- `OutputOptions`と`parseBoolean`は両コマンドで共通。コマンドごとの別型を追加しない。\n- 不正な環境変数値はどちらでも既存の`ConfigError`にする。\n- helpには両flagと優先順位を記載する。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "474e3e76d0e076608d6f45404605a69a0979ddc3fb125784522fac968889a415",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:32:12.223698+00:00",
+  "finished_at": "2026-09-02T05:33:27.224376+00:00",
+  "returncode": 0
+}

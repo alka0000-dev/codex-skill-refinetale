@@ -1,0 +1,22 @@
+{
+  "A": {
+    "expected_skill_trace": true,
+    "observed": [
+      true,
+      true,
+      true
+    ],
+    "passed": 3,
+    "runs": 3
+  },
+  "B": {
+    "expected_skill_trace": false,
+    "observed": [
+      false,
+      false,
+      false
+    ],
+    "passed": 3,
+    "runs": 3
+  }
+}

@@ -1,0 +1,338 @@
+[
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "02",
+    "fixture_name": "02-selective-retry",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "05",
+    "fixture_name": "05-prepared-publish",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "08",
+    "fixture_name": "08-inventory-transfer",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "06",
+    "fixture_name": "06-event-snapshot",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "01",
+    "fixture_name": "01-layered-timeout",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "04",
+    "fixture_name": "04-versioned-profile",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "07",
+    "fixture_name": "07-mounted-router",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  },
+  {
+    "fixture": "03",
+    "fixture_name": "03-atomic-ledger",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。"
+  }
+]

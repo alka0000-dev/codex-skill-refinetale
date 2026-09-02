@@ -1,0 +1,281 @@
+diff --git a/frontend/src/components/Common/CommandPalette.tsx b/frontend/src/components/Common/CommandPalette.tsx
+new file mode 100644
+index 0000000..4ea977b
+--- /dev/null
++++ b/frontend/src/components/Common/CommandPalette.tsx
+@@ -0,0 +1,140 @@
++import { useNavigate } from "@tanstack/react-router"
++import { Search } from "lucide-react"
++import { type KeyboardEvent, useEffect, useRef, useState } from "react"
++
++import type { NavigationItem } from "@/components/Sidebar/Main"
++import { Button } from "@/components/ui/button"
++import {
++  Dialog,
++  DialogContent,
++  DialogDescription,
++  DialogTitle,
++} from "@/components/ui/dialog"
++import { Input } from "@/components/ui/input"
++
++interface CommandPaletteProps {
++  items: NavigationItem[]
++}
++
++export function CommandPalette({ items }: CommandPaletteProps) {
++  const navigate = useNavigate()
++  const [isOpen, setIsOpen] = useState(false)
++  const [searchQuery, setSearchQuery] = useState("")
++  const commandButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
++  const normalizedQuery = searchQuery.trim().toLocaleLowerCase()
++  const filteredItems = items.filter(({ path, title }) =>
++    `${title} ${path}`.toLocaleLowerCase().includes(normalizedQuery),
++  )
++
++  useEffect(() => {
++    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
++      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
++        event.preventDefault()
++        setIsOpen((currentIsOpen) => !currentIsOpen)
++      }
++    }
++
++    window.addEventListener("keydown", handleKeyDown)
++    return () => window.removeEventListener("keydown", handleKeyDown)
++  }, [])
++
++  const handleOpenChange = (nextIsOpen: boolean) => {
++    setIsOpen(nextIsOpen)
++    if (!nextIsOpen) {
++      setSearchQuery("")
++    }
++  }
++
++  const handleSelect = (path: NavigationItem["path"]) => {
++    handleOpenChange(false)
++    void navigate({ to: path })
++  }
++
++  const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
++    if (event.key === "Enter" && filteredItems[0]) {
++      handleSelect(filteredItems[0].path)
++    }
++    if (event.key === "ArrowDown") {
++      event.preventDefault()
++      commandButtonRefs.current[0]?.focus()
++    }
++  }
++
++  const handleCommandKeyDown = (
++    event: KeyboardEvent<HTMLButtonElement>,
++    itemIndex: number,
++  ) => {
++    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
++      return
++    }
++
++    event.preventDefault()
++    const nextIndex =
++      event.key === "ArrowDown"
++        ? (itemIndex + 1) % filteredItems.length
++        : (itemIndex - 1 + filteredItems.length) % filteredItems.length
++    commandButtonRefs.current[nextIndex]?.focus()
++  }
++
++  return (
++    <>
++      <Button variant="outline" onClick={() => setIsOpen(true)}>
++        <Search data-icon="inline-start" />
++        <span className="hidden sm:inline">Search commands</span>
++        <kbd className="hidden rounded border bg-muted px-1.5 font-mono text-xs text-muted-foreground md:inline">
++          ⌘K / Ctrl K
++        </kbd>
++      </Button>
++      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
++        <DialogContent
++          className="gap-0 overflow-hidden p-0 sm:max-w-xl"
++          showCloseButton={false}
++        >
++          <DialogTitle className="sr-only">Command palette</DialogTitle>
++          <DialogDescription className="sr-only">
++            Search for a page to navigate to.
++          </DialogDescription>
++          <div className="border-b p-3">
++            <Input
++              aria-label="Search commands"
++              autoFocus
++              placeholder="Search pages..."
++              type="search"
++              value={searchQuery}
++              onChange={(event) => setSearchQuery(event.target.value)}
++              onKeyDown={handleSearchKeyDown}
++            />
++          </div>
++          <div className="max-h-72 overflow-y-auto p-2">
++            {filteredItems.length > 0 ? (
++              <ul className="flex flex-col gap-1">
++                {filteredItems.map((item, itemIndex) => (
++                  <li key={item.path}>
++                    <Button
++                      ref={(button) => {
++                        commandButtonRefs.current[itemIndex] = button
++                      }}
++                      className="h-auto w-full justify-start px-3 py-2"
++                      variant="ghost"
++                      onClick={() => handleSelect(item.path)}
++                      onKeyDown={(event) =>
++                        handleCommandKeyDown(event, itemIndex)
++                      }
++                    >
++                      <item.icon data-icon="inline-start" />
++                      {item.title}
++                    </Button>
++                  </li>
++                ))}
++              </ul>
++            ) : (
++              <p className="p-6 text-center text-sm text-muted-foreground">
++                No commands found.
++              </p>
++            )}
++          </div>
++        </DialogContent>
++      </Dialog>
++    </>
++  )
++}
+diff --git a/frontend/src/components/Sidebar/AppSidebar.tsx b/frontend/src/components/Sidebar/AppSidebar.tsx
+index 8502bcb..9243d42 100644
+--- a/frontend/src/components/Sidebar/AppSidebar.tsx
++++ b/frontend/src/components/Sidebar/AppSidebar.tsx
+@@ -1,5 +1,4 @@
+-import { Briefcase, Home, Users } from "lucide-react"
+-
++import type { UserPublic } from "@/client"
+ import { SidebarAppearance } from "@/components/Common/Appearance"
+ import { Logo } from "@/components/Common/Logo"
+ import {
+@@ -8,22 +7,15 @@ import {
+   SidebarFooter,
+   SidebarHeader,
+ } from "@/components/ui/sidebar"
+-import useAuth from "@/hooks/useAuth"
+-import { type Item, Main } from "./Main"
++import { Main, type NavigationItem } from "./Main"
+ import { User } from "./User"
+ 
+-const baseItems: Item[] = [
+-  { icon: Home, title: "Dashboard", path: "/" },
+-  { icon: Briefcase, title: "Items", path: "/items" },
+-]
+-
+-export function AppSidebar() {
+-  const { user: currentUser } = useAuth()
+-
+-  const items = currentUser?.is_superuser
+-    ? [...baseItems, { icon: Users, title: "Admin", path: "/admin" }]
+-    : baseItems
++interface AppSidebarProps {
++  items: NavigationItem[]
++  user: UserPublic | null | undefined
++}
+ 
++export function AppSidebar({ items, user }: AppSidebarProps) {
+   return (
+     <Sidebar collapsible="icon">
+       <SidebarHeader className="px-4 py-6 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
+@@ -34,7 +26,7 @@ export function AppSidebar() {
+       </SidebarContent>
+       <SidebarFooter>
+         <SidebarAppearance />
+-        <User user={currentUser} />
++        <User user={user} />
+       </SidebarFooter>
+     </Sidebar>
+   )
+diff --git a/frontend/src/components/Sidebar/Main.tsx b/frontend/src/components/Sidebar/Main.tsx
+index db4d7bc..1e1b65e 100644
+--- a/frontend/src/components/Sidebar/Main.tsx
++++ b/frontend/src/components/Sidebar/Main.tsx
+@@ -1,5 +1,5 @@
+ import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
+-import type { LucideIcon } from "lucide-react"
++import { Briefcase, Home, type LucideIcon, Users } from "lucide-react"
+ 
+ import {
+   SidebarGroup,
+@@ -10,14 +10,31 @@ import {
+   useSidebar,
+ } from "@/components/ui/sidebar"
+ 
+-export type Item = {
++export type NavigationItem = {
+   icon: LucideIcon
+   title: string
+-  path: string
++  path: "/" | "/items" | "/admin"
+ }
+ 
+ interface MainProps {
+-  items: Item[]
++  items: NavigationItem[]
++}
++
++const baseNavigationItems: NavigationItem[] = [
++  { icon: Home, title: "Dashboard", path: "/" },
++  { icon: Briefcase, title: "Items", path: "/items" },
++]
++
++const adminNavigationItem: NavigationItem = {
++  icon: Users,
++  title: "Admin",
++  path: "/admin",
++}
++
++export function getNavigationItems(isSuperuser: boolean) {
++  return isSuperuser
++    ? [...baseNavigationItems, adminNavigationItem]
++    : baseNavigationItems
+ }
+ 
+ export function Main({ items }: MainProps) {
+diff --git a/frontend/src/routes/_layout.tsx b/frontend/src/routes/_layout.tsx
+index 1697305..51787a6 100644
+--- a/frontend/src/routes/_layout.tsx
++++ b/frontend/src/routes/_layout.tsx
+@@ -1,13 +1,15 @@
+ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+ 
++import { CommandPalette } from "@/components/Common/CommandPalette"
+ import { Footer } from "@/components/Common/Footer"
+ import AppSidebar from "@/components/Sidebar/AppSidebar"
++import { getNavigationItems } from "@/components/Sidebar/Main"
+ import {
+   SidebarInset,
+   SidebarProvider,
+   SidebarTrigger,
+ } from "@/components/ui/sidebar"
+-import { isLoggedIn } from "@/hooks/useAuth"
++import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+ 
+ export const Route = createFileRoute("/_layout")({
+   component: Layout,
+@@ -21,12 +23,16 @@ export const Route = createFileRoute("/_layout")({
+ })
+ 
+ function Layout() {
++  const { user: currentUser } = useAuth()
++  const navigationItems = getNavigationItems(currentUser?.is_superuser === true)
++
+   return (
+     <SidebarProvider>
+-      <AppSidebar />
++      <AppSidebar items={navigationItems} user={currentUser} />
+       <SidebarInset>
+-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4">
++        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
+           <SidebarTrigger className="-ml-1 text-muted-foreground" />
++          <CommandPalette items={navigationItems} />
+         </header>
+         <main className="flex-1 p-6 md:p-8">
+           <div className="mx-auto max-w-7xl">

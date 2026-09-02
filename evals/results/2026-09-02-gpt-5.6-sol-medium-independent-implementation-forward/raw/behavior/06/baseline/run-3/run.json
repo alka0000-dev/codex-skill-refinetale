@@ -1,0 +1,16 @@
+{
+  "fixture": "06",
+  "fixture_name": "06-event-snapshot",
+  "mode": "baseline",
+  "run": 3,
+  "prompt": "# EventBusの購読解除\n\n`workspace/` の `EventBus` に購読解除を追加し、配信中の変更について契約を明確に実装してください。\n\n要件:\n\n- `on(event, handler)` は従来どおり登録し、同じhandlerの複数登録も別々の購読として扱う。\n- `off(event, handler)` は一致する登録のうち最初の1件だけを解除し、解除できたかをboolで返す。\n- 未知eventまたは未登録handlerの解除は `False` で、状態を作らない。\n- `emit` の開始時点の購読者を登録順に各1回呼ぶ。\n- handler内で行ったon/offは次回emitから反映し、進行中のemitには影響させない。\n- handler例外はそのまま送出し、以降のhandlerは呼ばない。\n- 既存のon/emitの戻り値と呼出し契約を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "d42740e143f3cb45cb0e292a9cad0768dbd4f2f591985b4a1ba944a7cc7c6223",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T06:07:09.609644+00:00",
+  "finished_at": "2026-09-02T06:09:11.975562+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "f79918c0d8a9dacbd038306c4097ecd6fec68f2d8dd1f5a08311b8d7a24754ad"
+}

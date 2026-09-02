@@ -1,0 +1,20 @@
+{
+  "source_added_loc": 178,
+  "source_deleted_loc": 23,
+  "source_files": 4,
+  "new_source_files": 1,
+  "test_added_loc": 0,
+  "test_deleted_loc": 0,
+  "test_files": 0,
+  "dependency_manifest_changed": false,
+  "dependency_paths": [],
+  "source_paths": [
+    "frontend/src/components/Common/CommandPalette.tsx",
+    "frontend/src/components/Sidebar/AppSidebar.tsx",
+    "frontend/src/components/Sidebar/Main.tsx",
+    "frontend/src/routes/_layout.tsx"
+  ],
+  "new_source_paths": [
+    "frontend/src/components/Common/CommandPalette.tsx"
+  ]
+}

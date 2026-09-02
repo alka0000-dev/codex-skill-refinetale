@@ -1,0 +1,16 @@
+{
+  "fixture": "03",
+  "fixture_name": "03-atomic-ledger",
+  "mode": "baseline",
+  "run": 1,
+  "prompt": "# 台帳への一括記帳\n\n`workspace/` の `Ledger` に一括記帳APIを追加してください。\n\n要件:\n\n- `apply_batch(entries)` を追加する。各entryは `(account, delta)` の2要素tupleで、accountは空でないstr、deltaはboolではないint。\n- 同一accountが複数回現れ得る。入力順に適用した途中を含め、残高が一度でも0未満になるbatchは `Overdraft` にする。\n- entry形式が不正なら `ValueError` にする。\n- 失敗したbatchでは、残高と監査ログを一切変更しない。\n- 成功時は各entryを入力順に既存の `apply` 経路で反映し、その戻り値のlistを返す。\n- `apply` と既存の公開状態の契約を維持する。\n\n`workspace/` のファイルを修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "eba46a56e6e1837a0683665ae81ba2ed79b42b7a40b8d5c6828acdc8ca74f17a",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:59:55.112854+00:00",
+  "finished_at": "2026-09-02T06:02:07.586580+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "57975a612453a485f9eb94e41c2c22fde8ddc42a126550da84b09d4add8b9951"
+}

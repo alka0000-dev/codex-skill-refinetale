@@ -1,0 +1,524 @@
+diff --git a/frontend/src/components/Common/WorkspaceSetupWizard.tsx b/frontend/src/components/Common/WorkspaceSetupWizard.tsx
+new file mode 100644
+index 0000000..3935c93
+--- /dev/null
++++ b/frontend/src/components/Common/WorkspaceSetupWizard.tsx
+@@ -0,0 +1,488 @@
++import { zodResolver } from "@hookform/resolvers/zod"
++import {
++  ArrowLeft,
++  ArrowRight,
++  Check,
++  CheckCircle2,
++  Settings2,
++  Sparkles,
++  Users,
++} from "lucide-react"
++import { type FormEvent, useState } from "react"
++import { type FieldPath, useForm } from "react-hook-form"
++import { z } from "zod"
++
++import { Button } from "@/components/ui/button"
++import {
++  Card,
++  CardContent,
++  CardDescription,
++  CardFooter,
++  CardHeader,
++  CardTitle,
++} from "@/components/ui/card"
++import { Checkbox } from "@/components/ui/checkbox"
++import {
++  Form,
++  FormControl,
++  FormDescription,
++  FormField,
++  FormItem,
++  FormLabel,
++  FormMessage,
++} from "@/components/ui/form"
++import { Input } from "@/components/ui/input"
++import {
++  Select,
++  SelectContent,
++  SelectGroup,
++  SelectItem,
++  SelectTrigger,
++  SelectValue,
++} from "@/components/ui/select"
++import { cn } from "@/lib/utils"
++
++const workspaceSetupSchema = z.object({
++  workspaceName: z
++    .string()
++    .trim()
++    .min(2, "Workspace name must be at least 2 characters")
++    .max(60, "Workspace name must be 60 characters or fewer"),
++  website: z.union([
++    z.literal(""),
++    z.url("Enter a complete URL, such as https://example.com"),
++  ]),
++  teamSize: z.enum(["just-me", "2-10", "11-50", "51-plus"], {
++    message: "Select a team size",
++  }),
++  primaryGoal: z.enum(["projects", "clients", "operations", "other"], {
++    message: "Select a primary goal",
++  }),
++  receiveProductTips: z.boolean(),
++})
++
++export type WorkspaceSetupValues = z.infer<typeof workspaceSetupSchema>
++
++type WizardStep = {
++  title: string
++  description: string
++  fields: FieldPath<WorkspaceSetupValues>[]
++  icon: typeof Settings2
++}
++
++const wizardSteps: WizardStep[] = [
++  {
++    title: "Workspace",
++    description: "Name your new workspace",
++    fields: ["workspaceName", "website"],
++    icon: Settings2,
++  },
++  {
++    title: "Preferences",
++    description: "Tailor it to your team",
++    fields: ["teamSize", "primaryGoal", "receiveProductTips"],
++    icon: Users,
++  },
++  {
++    title: "Review",
++    description: "Confirm your choices",
++    fields: [],
++    icon: Sparkles,
++  },
++]
++
++const teamSizeLabels: Record<WorkspaceSetupValues["teamSize"], string> = {
++  "just-me": "Just me",
++  "2-10": "2–10 people",
++  "11-50": "11–50 people",
++  "51-plus": "51+ people",
++}
++
++const primaryGoalLabels: Record<WorkspaceSetupValues["primaryGoal"], string> = {
++  projects: "Plan and deliver projects",
++  clients: "Manage client work",
++  operations: "Run team operations",
++  other: "Something else",
++}
++
++const defaultValues: WorkspaceSetupValues = {
++  workspaceName: "",
++  website: "",
++  teamSize: "just-me",
++  primaryGoal: "projects",
++  receiveProductTips: true,
++}
++
++type StepIndicatorProps = {
++  currentStepIndex: number
++}
++
++function StepIndicator({ currentStepIndex }: StepIndicatorProps) {
++  return (
++    <nav aria-label="Workspace setup progress">
++      <ol className="grid grid-cols-3 gap-2">
++        {wizardSteps.map((step, stepIndex) => {
++          const isCurrent = currentStepIndex === stepIndex
++          const isComplete = currentStepIndex > stepIndex
++          const StepIcon = step.icon
++
++          return (
++            <li
++              key={step.title}
++              aria-current={isCurrent ? "step" : undefined}
++              className="relative flex min-w-0 flex-col items-center gap-2 text-center"
++            >
++              {stepIndex < wizardSteps.length - 1 ? (
++                <span
++                  aria-hidden="true"
++                  className={cn(
++                    "absolute top-4 left-[calc(50%+1rem)] h-px w-[calc(100%-2rem)] bg-border",
++                    isComplete && "bg-primary",
++                  )}
++                />
++              ) : null}
++              <span
++                className={cn(
++                  "relative flex size-8 items-center justify-center rounded-full border bg-background text-muted-foreground",
++                  isCurrent &&
++                    "border-primary text-primary ring-4 ring-primary/10",
++                  isComplete &&
++                    "border-primary bg-primary text-primary-foreground",
++                )}
++              >
++                {isComplete ? (
++                  <Check className="size-4" aria-hidden="true" />
++                ) : (
++                  <StepIcon className="size-4" aria-hidden="true" />
++                )}
++              </span>
++              <span className="min-w-0">
++                <span
++                  className={cn(
++                    "block truncate text-xs font-medium text-muted-foreground sm:text-sm",
++                    (isCurrent || isComplete) && "text-foreground",
++                  )}
++                >
++                  {step.title}
++                </span>
++                <span className="sr-only">{step.description}</span>
++              </span>
++            </li>
++          )
++        })}
++      </ol>
++    </nav>
++  )
++}
++
++type WorkspaceSetupWizardProps = {
++  onComplete?: (values: WorkspaceSetupValues) => void
++}
++
++export function WorkspaceSetupWizard({
++  onComplete,
++}: WorkspaceSetupWizardProps) {
++  const [currentStepIndex, setCurrentStepIndex] = useState(0)
++  const [isComplete, setIsComplete] = useState(false)
++  const form = useForm<WorkspaceSetupValues>({
++    resolver: zodResolver(workspaceSetupSchema),
++    mode: "onBlur",
++    defaultValues,
++  })
++
++  const currentStep = wizardSteps[currentStepIndex]
++  const isFinalStep = currentStepIndex === wizardSteps.length - 1
++
++  const handleNext = async () => {
++    const isStepValid = await form.trigger(currentStep.fields, {
++      shouldFocus: true,
++    })
++
++    if (isStepValid) {
++      setCurrentStepIndex((stepIndex) =>
++        Math.min(stepIndex + 1, wizardSteps.length - 1),
++      )
++    }
++  }
++
++  const handleBack = () => {
++    setCurrentStepIndex((stepIndex) => Math.max(stepIndex - 1, 0))
++  }
++
++  const handleComplete = (values: WorkspaceSetupValues) => {
++    onComplete?.(values)
++    setIsComplete(true)
++  }
++
++  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
++    event.preventDefault()
++
++    if (isFinalStep) {
++      await form.handleSubmit(handleComplete)()
++      return
++    }
++
++    await handleNext()
++  }
++
++  const handleReset = () => {
++    form.reset(defaultValues)
++    setCurrentStepIndex(0)
++    setIsComplete(false)
++  }
++
++  if (isComplete) {
++    return (
++      <Card className="mx-auto w-full max-w-3xl">
++        <CardContent className="flex flex-col items-center gap-5 py-10 text-center sm:py-14">
++          <span className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
++            <CheckCircle2 className="size-7" aria-hidden="true" />
++          </span>
++          <div className="flex max-w-md flex-col gap-2">
++            <h2 className="text-2xl font-semibold tracking-tight">
++              Your workspace is ready
++            </h2>
++            <p className="text-sm text-muted-foreground sm:text-base">
++              {form.getValues("workspaceName")} has been configured with your
++              team preferences.
++            </p>
++          </div>
++          <Button type="button" onClick={handleReset}>
++            Set up another workspace
++            <ArrowRight data-icon="inline-end" />
++          </Button>
++        </CardContent>
++      </Card>
++    )
++  }
++
++  return (
++    <Card className="mx-auto w-full max-w-3xl overflow-hidden">
++      <CardHeader className="border-b bg-muted/30">
++        <CardTitle>Set up your workspace</CardTitle>
++        <CardDescription>
++          A few quick details will help us personalize your experience.
++        </CardDescription>
++        <div className="pt-4">
++          <StepIndicator currentStepIndex={currentStepIndex} />
++        </div>
++      </CardHeader>
++
++      <Form {...form}>
++        <form onSubmit={handleSubmit} noValidate>
++          <CardContent className="min-h-80 py-7 sm:py-9">
++            <div className="mb-7 flex flex-col gap-1">
++              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
++                Step {currentStepIndex + 1} of {wizardSteps.length}
++              </p>
++              <h2 className="text-xl font-semibold tracking-tight">
++                {currentStep.title}
++              </h2>
++              <p className="text-sm text-muted-foreground">
++                {currentStep.description}
++              </p>
++            </div>
++
++            {currentStepIndex === 0 ? (
++              <div className="grid gap-5 sm:grid-cols-2">
++                <FormField
++                  control={form.control}
++                  name="workspaceName"
++                  render={({ field }) => (
++                    <FormItem className="sm:col-span-2">
++                      <FormLabel>Workspace name</FormLabel>
++                      <FormControl>
++                        <Input
++                          type="text"
++                          placeholder="Acme Studio"
++                          autoComplete="organization"
++                          {...field}
++                        />
++                      </FormControl>
++                      <FormDescription>
++                        This is the name your team will see.
++                      </FormDescription>
++                      <FormMessage />
++                    </FormItem>
++                  )}
++                />
++                <FormField
++                  control={form.control}
++                  name="website"
++                  render={({ field }) => (
++                    <FormItem className="sm:col-span-2">
++                      <FormLabel>Website</FormLabel>
++                      <FormControl>
++                        <Input
++                          type="url"
++                          placeholder="https://example.com"
++                          autoComplete="url"
++                          {...field}
++                        />
++                      </FormControl>
++                      <FormDescription>Optional</FormDescription>
++                      <FormMessage />
++                    </FormItem>
++                  )}
++                />
++              </div>
++            ) : null}
++
++            {currentStepIndex === 1 ? (
++              <div className="grid gap-5 sm:grid-cols-2">
++                <FormField
++                  control={form.control}
++                  name="teamSize"
++                  render={({ field }) => (
++                    <FormItem>
++                      <FormLabel>Team size</FormLabel>
++                      <Select
++                        value={field.value}
++                        onValueChange={field.onChange}
++                      >
++                        <FormControl>
++                          <SelectTrigger className="w-full">
++                            <SelectValue placeholder="Select a team size" />
++                          </SelectTrigger>
++                        </FormControl>
++                        <SelectContent>
++                          <SelectGroup>
++                            {Object.entries(teamSizeLabels).map(
++                              ([value, label]) => (
++                                <SelectItem key={value} value={value}>
++                                  {label}
++                                </SelectItem>
++                              ),
++                            )}
++                          </SelectGroup>
++                        </SelectContent>
++                      </Select>
++                      <FormMessage />
++                    </FormItem>
++                  )}
++                />
++                <FormField
++                  control={form.control}
++                  name="primaryGoal"
++                  render={({ field }) => (
++                    <FormItem>
++                      <FormLabel>Primary goal</FormLabel>
++                      <Select
++                        value={field.value}
++                        onValueChange={field.onChange}
++                      >
++                        <FormControl>
++                          <SelectTrigger className="w-full">
++                            <SelectValue placeholder="Select a goal" />
++                          </SelectTrigger>
++                        </FormControl>
++                        <SelectContent>
++                          <SelectGroup>
++                            {Object.entries(primaryGoalLabels).map(
++                              ([value, label]) => (
++                                <SelectItem key={value} value={value}>
++                                  {label}
++                                </SelectItem>
++                              ),
++                            )}
++                          </SelectGroup>
++                        </SelectContent>
++                      </Select>
++                      <FormMessage />
++                    </FormItem>
++                  )}
++                />
++                <FormField
++                  control={form.control}
++                  name="receiveProductTips"
++                  render={({ field }) => (
++                    <FormItem className="flex items-start gap-3 rounded-lg border p-4 sm:col-span-2">
++                      <FormControl>
++                        <Checkbox
++                          checked={field.value}
++                          onCheckedChange={field.onChange}
++                        />
++                      </FormControl>
++                      <div className="grid gap-1 leading-none">
++                        <FormLabel className="font-medium">
++                          Send me workspace tips
++                        </FormLabel>
++                        <FormDescription>
++                          Get occasional guidance for making the most of your
++                          workspace.
++                        </FormDescription>
++                      </div>
++                    </FormItem>
++                  )}
++                />
++              </div>
++            ) : null}
++
++            {currentStepIndex === 2 ? (
++              <dl className="grid gap-5 rounded-lg border bg-muted/20 p-5 sm:grid-cols-2 sm:p-6">
++                <div className="grid gap-1">
++                  <dt className="text-sm text-muted-foreground">
++                    Workspace name
++                  </dt>
++                  <dd className="font-medium">
++                    {form.getValues("workspaceName")}
++                  </dd>
++                </div>
++                <div className="grid gap-1">
++                  <dt className="text-sm text-muted-foreground">Website</dt>
++                  <dd className="break-words font-medium">
++                    {form.getValues("website") || "Not provided"}
++                  </dd>
++                </div>
++                <div className="grid gap-1">
++                  <dt className="text-sm text-muted-foreground">Team size</dt>
++                  <dd className="font-medium">
++                    {teamSizeLabels[form.getValues("teamSize")]}
++                  </dd>
++                </div>
++                <div className="grid gap-1">
++                  <dt className="text-sm text-muted-foreground">
++                    Primary goal
++                  </dt>
++                  <dd className="font-medium">
++                    {primaryGoalLabels[form.getValues("primaryGoal")]}
++                  </dd>
++                </div>
++                <div className="grid gap-1 sm:col-span-2">
++                  <dt className="text-sm text-muted-foreground">
++                    Workspace tips
++                  </dt>
++                  <dd className="font-medium">
++                    {form.getValues("receiveProductTips")
++                      ? "Subscribed"
++                      : "Not subscribed"}
++                  </dd>
++                </div>
++              </dl>
++            ) : null}
++          </CardContent>
++
++          <CardFooter className="justify-between gap-3 border-t bg-muted/20 py-5">
++            <Button
++              type="button"
++              variant="ghost"
++              onClick={handleBack}
++              disabled={currentStepIndex === 0}
++            >
++              <ArrowLeft data-icon="inline-start" />
++              Back
++            </Button>
++            <Button type="submit">
++              {isFinalStep ? "Create workspace" : "Continue"}
++              {isFinalStep ? (
++                <Check data-icon="inline-end" />
++              ) : (
++                <ArrowRight data-icon="inline-end" />
++              )}
++            </Button>
++          </CardFooter>
++        </form>
++      </Form>
++    </Card>
++  )
++}
+diff --git a/frontend/src/routes/_layout/index.tsx b/frontend/src/routes/_layout/index.tsx
+index 3e640cb..f7a96b4 100644
+--- a/frontend/src/routes/_layout/index.tsx
++++ b/frontend/src/routes/_layout/index.tsx
+@@ -1,5 +1,6 @@
+ import { createFileRoute } from "@tanstack/react-router"
+ 
++import { WorkspaceSetupWizard } from "@/components/Common/WorkspaceSetupWizard"
+ import useAuth from "@/hooks/useAuth"
+ 
+ export const Route = createFileRoute("/_layout/")({
+@@ -17,8 +18,8 @@ function Dashboard() {
+   const { user: currentUser } = useAuth()
+ 
+   return (
+-    <div>
+-      <div>
++    <div className="flex flex-col gap-8">
++      <div className="flex flex-col gap-1">
+         <h1 className="text-2xl truncate max-w-sm">
+           Hi, {currentUser?.full_name || currentUser?.email} 👋
+         </h1>
+@@ -26,6 +27,7 @@ function Dashboard() {
+           Welcome back, nice to see you again!!!
+         </p>
+       </div>
++      <WorkspaceSetupWizard />
+     </div>
+   )
+ }

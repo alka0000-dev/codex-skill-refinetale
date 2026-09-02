@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "02",
+  "mode": "baseline",
+  "run": 3,
+  "prompt": "既存のプロジェクト作成・編集画面に「既存プロジェクトから複製して新規作成」を追加します。要件を満たす最小限の実装方針を、変更するコンポーネント、状態、API入力、初期化タイミング、テストが分かる形で示してください。必要なら短い疑似コードを使ってください。\n\n`ProjectForm.tsx`:\n\n```tsx\ntype ProjectFormProps = {\n  mode: \"create\" | \"edit\";\n  initialValues: ProjectFormValues;\n  onSubmit: (values: ProjectFormValues) => Promise<void>;\n};\n\nexport function ProjectForm(props: ProjectFormProps) {\n  const form = useProjectForm(props.initialValues);\n  return <ProjectFields form={form} submitLabel={props.mode === \"edit\" ? \"保存\" : \"作成\"} />;\n}\n```\n\n`project-routes.tsx`:\n\n```tsx\nexport function NewProjectRoute() {\n  return <ProjectForm mode=\"create\" initialValues={emptyProjectValues()} onSubmit={createProject} />;\n}\n\nexport function EditProjectRoute({ project }: { project: Project }) {\n  return <ProjectForm mode=\"edit\" initialValues={toProjectFormValues(project)} onSubmit={updateProject} />;\n}\n```\n\n`Project`には次の値がある:\n\n```ts\ntype Project = {\n  id: string;\n  name: string;\n  description: string;\n  memberRoleIds: string[];\n  notificationRules: NotificationRule[];\n  deploymentTargetId: string | null;\n  deployToken: string | null;\n  createdAt: string;\n  updatedAt: string;\n};\n```\n\n既存契約と新要件:\n\n- 複製元はroute loaderで取得してからフォームを表示する。ローディング中はフォームを表示しない。\n- 引き継ぐのは`description`、`memberRoleIds`、`notificationRules`、`deploymentTargetId`。\n- `id`、`createdAt`、`updatedAt`、`deployToken`は引き継がず、`deployToken`は画面にも初期表示しない。\n- `name`は元の名前に` (copy)`を一度だけ付ける。\n- 送信先とpayloadは通常の新規作成と同じ。更新APIや複製専用APIは追加しない。\n- validation、dirty判定、エラー表示は既存の作成・編集と共通である。\n- フォーム表示後にloaderの再検証が起きても、ユーザー入力を上書きしてはならない。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "1f5bc83608d9b59d108ab4c9e91c4f4e6cd85cd2bfdcea7018de836ab775678d",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T04:34:49.765711+00:00",
+  "finished_at": "2026-09-02T04:36:03.866169+00:00",
+  "returncode": 0
+}

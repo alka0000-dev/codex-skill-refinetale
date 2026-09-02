@@ -1,0 +1,6 @@
+{
+  "checks": {
+    "date-input": true
+  },
+  "all_present": true
+}

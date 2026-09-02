@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "03",
+  "mode": "baseline",
+  "run": 2,
+  "prompt": "次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "a0e4bc0e521a2554d8ab758c172790b44978dbfaec081cc99405a613f114cc26",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:44:02.725269+00:00",
+  "finished_at": "2026-09-02T02:44:55.400114+00:00",
+  "returncode": 0
+}

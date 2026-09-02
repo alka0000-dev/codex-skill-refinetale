@@ -1,0 +1,22 @@
+
+> frontend@0.0.0 build
+> tsc -p tsconfig.build.json && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2181 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             0.55 kB │ gzip:   0.33 kB
+dist/assets/index-BdACh3qo.css             63.53 kB │ gzip:  11.40 kB
+dist/assets/index-Fe1JgztA.js               0.36 kB │ gzip:   0.27 kB
+dist/assets/recover-password-Hsrofu2K.js    1.34 kB │ gzip:   0.70 kB
+dist/assets/login-CbVQBDT1.js               1.76 kB │ gzip:   0.78 kB
+dist/assets/reset-password-q6-e9QIr.js      2.01 kB │ gzip:   0.88 kB
+dist/assets/dialog-Uh3brLPw.js              2.34 kB │ gzip:   0.85 kB
+dist/assets/items-Cfuycpjd.js               8.27 kB │ gzip:   2.66 kB
+dist/assets/settings-CUYey-I0.js            9.77 kB │ gzip:   3.36 kB
+dist/assets/admin-PIfZTe9P.js              16.27 kB │ gzip:   4.77 kB
+dist/assets/DataTable-DYfvJOX5.js          78.02 kB │ gzip:  22.34 kB
+dist/assets/index-B_Xsrfa5.js             692.76 kB │ gzip: 222.53 kB
+✓ built in 4.64s

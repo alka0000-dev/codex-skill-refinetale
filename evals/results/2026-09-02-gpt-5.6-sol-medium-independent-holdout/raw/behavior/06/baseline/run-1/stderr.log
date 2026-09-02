@@ -1,0 +1,7 @@
+Reading additional input from stdin...
+2026-09-02T04:41:44.487568Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T04:41:44.487794Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T04:41:44.580603Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T04:41:44.584237Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T04:43:21.003124Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T04:43:21.040183Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a0606c-48bf-7e90-83f5-42f1bf08ad0c.1788324104500918000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

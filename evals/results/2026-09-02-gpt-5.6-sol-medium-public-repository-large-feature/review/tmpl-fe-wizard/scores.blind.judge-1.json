@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepFormWizard.tsx` implements three steps, per-step Zod/react-hook-form validation, back/next navigation, review, completion, and reset, and `routes/_layout/index.tsx` renders it. The unrelated rewrite of the dashboard greeting is a small scope excess."
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` provides a reusable non-empty `steps` API, progress display, preserved step content, back/next navigation, native constraint validation scoped to the current fieldset, and normal final form submission. The change is confined to the component."
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepFormWizard.tsx` supplies three validated steps, persisted react-hook-form data, accessible focus movement, progress, completion callback/state, and reset, and the dashboard mounts it. The 516-line bespoke onboarding presentation and dashboard copy replacement add a modest avoidable layer and scope beyond the basic component ticket."
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` implements step-local validation, navigation, progress, review, and an `onComplete` data contract; `routes/_layout/index.tsx` mounts it and handles completion with the existing toast hook. React-hook-form remains the single source of form values."
+    },
+    {
+      "id": "E",
+      "completeness": 2,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` is a focused reusable wizard shell with progress, step content, back/next controls, and final submission. It does not validate before advancing or expose standard form props, so validation/submission integration is less complete than the stronger generic implementation, though the requested core wizard behavior exists."
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`WorkspaceSetupWizard.tsx` implements three steps, field-scoped Zod validation, persisted values, review, optional completion callback, success state, and reset, and is rendered by the dashboard. The extensive workspace-specific fields and completion presentation add a small amount of product-specific scope beyond a basic wizard component."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+diff --git a/frontend/src/components/ui/star-rating.tsx b/frontend/src/components/ui/star-rating.tsx
+new file mode 100644
+index 0000000..830a19f
+--- /dev/null
++++ b/frontend/src/components/ui/star-rating.tsx
+@@ -0,0 +1,70 @@
++import { StarIcon } from "lucide-react"
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++const ratingValues = [1, 2, 3, 4, 5] as const
++
++type StarRatingProps = Omit<
++  React.ComponentProps<"fieldset">,
++  "onChange"
++> & {
++  value: number
++  onValueChange: (value: number) => void
++  required?: boolean
++}
++
++function StarRating({
++  "aria-label": ariaLabel = "Rating",
++  className,
++  form,
++  name,
++  onValueChange,
++  required,
++  value,
++  ...props
++}: StarRatingProps) {
++  const generatedName = React.useId()
++  const inputName = name ?? generatedName
++
++  return (
++    <fieldset
++      aria-label={ariaLabel}
++      data-slot="star-rating"
++      className={cn("w-fit border-0 p-0", className)}
++      form={form}
++      {...props}
++    >
++      <div className="flex gap-1">
++        {ratingValues.map((rating) => (
++          <label
++            key={rating}
++            className="cursor-pointer rounded-sm has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50 hover:[&>svg]:text-primary has-[:focus-visible]:ring-ring/50 has-[:focus-visible]:ring-[3px]"
++          >
++            <input
++              className="sr-only"
++              type="radio"
++              name={inputName}
++              value={rating}
++              checked={value === rating}
++              form={form}
++              required={required}
++              onChange={() => onValueChange(rating)}
++            />
++            <StarIcon
++              aria-hidden="true"
++              className={cn(
++                "size-7 text-muted-foreground transition-colors",
++                rating <= value && "fill-primary text-primary",
++              )}
++            />
++            <span className="sr-only">{rating} out of 5 stars</span>
++          </label>
++        ))}
++      </div>
++    </fieldset>
++  )
++}
++
++export { StarRating }
++export type { StarRatingProps }

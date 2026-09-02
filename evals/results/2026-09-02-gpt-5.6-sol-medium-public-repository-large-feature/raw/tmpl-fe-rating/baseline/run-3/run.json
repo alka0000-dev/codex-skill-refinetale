@@ -1,0 +1,25 @@
+{
+  "task_id": "tmpl-fe-rating",
+  "mode": "baseline",
+  "run": 3,
+  "ticket": "Add a star rating input component to the frontend.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T10:08:21.752317+00:00",
+  "finished_at": "2026-09-02T10:13:14.176217+00:00",
+  "returncode": 0,
+  "timed_out": false,
+  "build_passed": true,
+  "prompt_sha256": "e07f2ab4a7fbf9e92e29190387170ee18e3854b575bb8401f9099e4f874d45d5",
+  "diff_sha256": "f8805f792895f6f142770ca5c86ade45132cdea35ebfbf46292065ce1e95a5da",
+  "skill_trace": false,
+  "global_refinetale_trace": false,
+  "referytale_trace": false,
+  "usage": {
+    "input_tokens": 592593,
+    "cached_input_tokens": 544000,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 8490,
+    "reasoning_output_tokens": 3342
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx`で既存の`Input`を`type=\"date\"`として再利用しており、日付選択の中核機能を実装している。`type`をpropsから除外し、`className`も`cn`で一度だけ統合している。追加のlight/dark color-scheme指定も日付入力の表示調整に限定される。ビルド成功。"
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "既存の`Input`に`type=\"date\"`と`data-slot=\"date-picker\"`を設定した小さなラッパーで、DatePickerとprops型を公開している。値やイベントの別経路を設けず、ネイティブ入力の単一経路に集約されている。ビルド成功。"
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`Input`を直接再利用し、props展開後に`type=\"date\"`を固定しているため、DatePickerの入力種別が一意に保たれる。コンポーネントと`DatePickerProps`の公開以外に余分な機構はない。ビルド成功。"
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "既存の`Input`を`type=\"date\"`に固定した単一コンポーネントとして実装され、要求された日付選択機能を満たす。props型を別途exportしていないが、チケット上の必須要件ではなく、利用可能なDatePicker自体は公開されている。ビルド成功。"
+    },
+    {
+      "id": "E",
+      "completeness": 3,
+      "coherence": 1,
+      "scope_discipline": 1,
+      "single_path": 2,
+      "critical_failure": false,
+      "evidence": "日付選択、月移動、キーボード操作、min/max、フォーム送信まで動作する独自カレンダーを実装しており、中核機能は揃う。一方、480行のカレンダー計算・フォーカス管理・ダイアログ・locale・weekStartsOn・Today/Clear・controlled/uncontrolled APIは単純な追加チケットに対して大きな独自レイヤーである。`onChange`と`onValueChange`という重複通知経路もあるが、選択値そのものはcontrolled/uncontrolledの標準的な分岐で管理される。ビルド成功。"
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "既存の`Input`を`type=\"date\"`として再利用し、日付選択をネイティブ入力の一経路だけで提供している。props型はインラインだが`type`を除外しており、不要な状態や追加APIはない。ビルド成功。"
+    }
+  ]
+}

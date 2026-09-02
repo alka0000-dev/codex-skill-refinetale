@@ -1,0 +1,25 @@
+{
+  "task_id": "tmpl-fe-datepicker",
+  "mode": "baseline",
+  "run": 1,
+  "ticket": "Add a date picker component to the frontend.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T09:49:40.362714+00:00",
+  "finished_at": "2026-09-02T09:58:20.102886+00:00",
+  "returncode": 0,
+  "timed_out": false,
+  "build_passed": true,
+  "prompt_sha256": "a0e597dafe7b67f706bcccbf7ceaabe2cf87cb9b200cabb1bb47a6675136d0ab",
+  "diff_sha256": "a1715741826785d8f630db889c3b85d3e487acc1cc89d4af2815b662b31f5e09",
+  "skill_trace": false,
+  "global_refinetale_trace": false,
+  "referytale_trace": false,
+  "usage": {
+    "input_tokens": 1102546,
+    "cached_input_tokens": 1047936,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 14588,
+    "reasoning_output_tokens": 4570
+  }
+}

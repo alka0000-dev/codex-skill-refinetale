@@ -1,0 +1,142 @@
+diff --git a/frontend/src/components/ui/file-upload-dropzone.tsx b/frontend/src/components/ui/file-upload-dropzone.tsx
+new file mode 100644
+index 0000000..6bd91fc
+--- /dev/null
++++ b/frontend/src/components/ui/file-upload-dropzone.tsx
+@@ -0,0 +1,136 @@
++import { Upload } from "lucide-react"
++import type { ChangeEvent, DragEvent } from "react"
++import { useId, useState } from "react"
++
++import { cn } from "@/lib/utils"
++
++interface FileUploadDropzoneProps {
++  accept?: string
++  className?: string
++  disabled?: boolean
++  multiple?: boolean
++  onFilesSelected: (files: File[]) => void
++}
++
++function matchesAcceptedType(file: File, acceptedType: string) {
++  const normalizedType = acceptedType.toLowerCase()
++
++  if (normalizedType.startsWith(".")) {
++    return file.name.toLowerCase().endsWith(normalizedType)
++  }
++
++  if (normalizedType.endsWith("/*")) {
++    return file.type.toLowerCase().startsWith(normalizedType.slice(0, -1))
++  }
++
++  return file.type.toLowerCase() === normalizedType
++}
++
++function getAcceptedFiles(
++  files: FileList,
++  accept: string | undefined,
++  multiple: boolean,
++) {
++  const acceptedTypes = accept
++    ?.split(",")
++    .map((type) => type.trim())
++    .filter(Boolean)
++  const acceptedFiles = acceptedTypes?.length
++    ? Array.from(files).filter((file) =>
++        acceptedTypes.some((type) => matchesAcceptedType(file, type)),
++      )
++    : Array.from(files)
++
++  return multiple ? acceptedFiles : acceptedFiles.slice(0, 1)
++}
++
++function FileUploadDropzone({
++  accept,
++  className,
++  disabled = false,
++  multiple = false,
++  onFilesSelected,
++}: FileUploadDropzoneProps) {
++  const inputId = useId()
++  const [isDragging, setIsDragging] = useState(false)
++  const isDropActive = isDragging && !disabled
++
++  const selectFiles = (files: FileList) => {
++    const acceptedFiles = getAcceptedFiles(files, accept, multiple)
++
++    if (acceptedFiles.length > 0) {
++      onFilesSelected(acceptedFiles)
++    }
++  }
++
++  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
++    if (event.currentTarget.files) {
++      selectFiles(event.currentTarget.files)
++    }
++
++    event.currentTarget.value = ""
++  }
++
++  const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++
++    if (!disabled) {
++      setIsDragging(true)
++    }
++  }
++
++  const handleDragLeave = () => {
++    setIsDragging(false)
++  }
++
++  const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    setIsDragging(false)
++
++    if (!disabled) {
++      selectFiles(event.dataTransfer.files)
++    }
++  }
++
++  return (
++    <div data-slot="file-upload-dropzone">
++      <input
++        id={inputId}
++        type="file"
++        className="peer sr-only"
++        accept={accept}
++        disabled={disabled}
++        multiple={multiple}
++        onChange={handleChange}
++      />
++      <label
++        htmlFor={inputId}
++        className={cn(
++          "flex min-h-48 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-muted/30 px-6 py-10 text-center transition-colors hover:bg-muted/50 peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px] peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
++          isDropActive && "border-primary bg-primary/10",
++          className,
++        )}
++        aria-disabled={disabled}
++        onDragEnter={handleDragOver}
++        onDragOver={handleDragOver}
++        onDragLeave={handleDragLeave}
++        onDrop={handleDrop}
++      >
++        <span className="pointer-events-none flex flex-col items-center gap-3">
++          <Upload className="size-8 text-muted-foreground" aria-hidden="true" />
++          <span className="text-sm font-medium">
++            {isDropActive
++              ? "Drop files here"
++              : "Drag and drop files here, or click to browse"}
++          </span>
++          <span className="text-xs text-muted-foreground">
++            Files are selected from your device
++          </span>
++        </span>
++      </label>
++    </div>
++  )
++}
++
++export { FileUploadDropzone }
++export type { FileUploadDropzoneProps }

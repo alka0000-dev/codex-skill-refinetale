@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "06",
+  "mode": "baseline",
+  "run": 3,
+  "prompt": "ジョブ実行の既存メトリクスに、完了したジョブの所要時間histogramを追加します。既存の計測点とlabel規則を維持し、二重計測や高カーディナリティを起こさない変更案を、型・登録・記録処理・テストまで示してください。\n\n既存metrics:\n\n```ts\nconst jobsFinished = meter.createCounter(\"jobs_finished_total\");\nconst jobsFailed = meter.createCounter(\"jobs_failed_total\");\n\ntype QueueName = \"critical\" | \"default\" | \"bulk\";\ntype Region = \"ap-northeast-1\" | \"us-east-1\";\ntype FailureReason = \"timeout\" | \"dependency\" | \"invalid_input\" | \"unknown\";\n\ntype JobContext = {\n  queue: QueueName;\n  region: Region;\n  jobName: string;\n  accountId: string;\n};\n\nfunction baseJobLabels(ctx: JobContext) {\n  return { queue: ctx.queue, region: ctx.region } as const;\n}\n\nexport function recordJobFinished(input: {\n  ctx: JobContext;\n  outcome: \"success\" | \"failure\";\n  reason?: FailureReason;\n}) {\n  jobsFinished.add(1, { ...baseJobLabels(input.ctx), outcome: input.outcome });\n  if (input.outcome === \"failure\") {\n    jobsFailed.add(1, {\n      ...baseJobLabels(input.ctx),\n      reason: input.reason ?? \"unknown\",\n    });\n  }\n}\n```\n\n呼び出し側:\n\n```ts\nconst startedAt = monotonicClock.nowMs();\ntry {\n  await handler.run(job);\n  recordJobFinished({ ctx, outcome: \"success\" });\n} catch (error) {\n  recordJobFinished({ ctx, outcome: \"failure\", reason: classifyFailure(error) });\n  throw error;\n} finally {\n  logger.info({ durationMs: monotonicClock.nowMs() - startedAt }, \"job finished\");\n}\n```\n\n新要件:\n\n- histogram名は`job_duration_seconds`、unitはseconds、bucketは`[0.1, 0.5, 1, 5, 15, 60]`。\n- labelは`queue`、`region`、`outcome`だけ。`jobName`、`accountId`、error messageは禁止。\n- 成功/失敗とも完了した1 jobにつき1 observation。\n- 既存counterの名前、label、failure reason分類は変えない。\n- durationは既存monotonic clockの1組の測定値から算出し、別timerやwall clockを追加しない。\n- `handler.run`が同期的にthrowしてもfailureとして1回計測し、例外は従来どおり再throwする。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "e7922527b5b809d2f62ef29f47a5a49a6f0b1ad6558a3994e4a39a2b467dd511",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:29:02.282647+00:00",
+  "finished_at": "2026-09-02T05:31:21.787275+00:00",
+  "returncode": 0
+}

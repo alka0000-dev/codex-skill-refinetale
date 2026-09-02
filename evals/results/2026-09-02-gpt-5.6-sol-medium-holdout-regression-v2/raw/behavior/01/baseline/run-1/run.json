@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "01",
+  "mode": "baseline",
+  "run": 1,
+  "prompt": "次のコードベースに、請求書の下書き作成が429を返した場合だけ自動再試行する変更を加えたいです。既存の挙動を壊さず、変更範囲を小さくしてください。変更する型・関数・呼び出し関係が分かる実装案と、必要なテストを示してください。入力にない前提が必要なら、仮定として分けてください。\n\n`packages/http/retry.ts`:\n\n```ts\ntype RetryableMethod = \"GET\" | \"PUT\" | \"DELETE\";\n\nexport type RetryRequest<T> = {\n  method: RetryableMethod;\n  retryableStatuses?: readonly number[];\n  maxAttempts?: number;\n  send: () => Promise<HttpResponse<T>>;\n};\n\nexport async function requestWithRetry<T>({\n  method,\n  retryableStatuses = [429, 503],\n  maxAttempts = 3,\n  send,\n}: RetryRequest<T>): Promise<HttpResponse<T>> {\n  // 指数バックオフ、Retry-After、試行回数のログはここだけで扱う。\n  // GET/PUT/DELETE の通信タイムアウトも再試行対象。\n  return retryLoop({ method, retryableStatuses, maxAttempts, send });\n}\n```\n\n`packages/billing/invoice-client.ts`:\n\n```ts\nexport class InvoiceClient {\n  constructor(private readonly http: HttpClient) {}\n\n  createDraft(input: CreateDraftInput, idempotencyKey: string) {\n    return this.http.post(\"/v2/invoices\", input, {\n      headers: { \"Idempotency-Key\": idempotencyKey },\n    });\n  }\n}\n```\n\n`packages/payments/payment-client.ts`:\n\n```ts\nexport class PaymentClient {\n  constructor(private readonly http: HttpClient) {}\n\n  // ベンダー側が冪等性キーを受け付けないため、自動再試行は禁止。\n  capture(input: CaptureInput) {\n    return this.http.post(\"/v1/captures\", input);\n  }\n}\n```\n\n既存契約と新要件:\n\n- `requestWithRetry`のバックオフ、`Retry-After`対応、ログ形式は変更しない。\n- `createDraft`は429のみ最大3回まで試行する。503、その他の5xx、通信タイムアウトは再試行しない。\n- 全試行で、呼び出し元から渡された同じ非空の`idempotencyKey`と同じrequest bodyを使う。\n- `capture`を含む、ほかのPOSTは今後も自動再試行してはならない。\n- 既存のGET/PUT/DELETEの再試行条件は変えない。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "70749bc94c1bf6aeeff4bf604fe2b21ca1ede77d68d71b92bc46fc3f60d1171f",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:34:40.435427+00:00",
+  "finished_at": "2026-09-02T05:36:31.883615+00:00",
+  "returncode": 0
+}

@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "05",
+  "mode": "refinetale",
+  "run": 3,
+  "prompt": "$refinetale\n\n既存のCSV注文エクスポートにNDJSON形式を追加します。認可、テナント分離、抽出条件、公開可能な項目、件数上限、監査を変えず、形式による差だけを追加する実装案を示してください。handlerから永続化層、serializerまでの流れとテストを具体的にしてください。\n\n現在のhandler:\n\n```ts\nexport async function exportOrdersCsv(req: Request, session: Session) {\n  requirePermission(session, \"orders:export\");\n  const filter = ExportOrderFilterSchema.parse({\n    tenantId: session.tenantId,\n    status: req.query.status,\n    from: req.query.from,\n    to: req.query.to,\n    limit: Math.min(Number(req.query.limit ?? 10_000), 10_000),\n  });\n\n  const rows = streamOrders(filter);\n  const publicRows = mapStream(rows, toPublicOrderExportRow);\n  audit.record(\"orders.exported\", { tenantId: session.tenantId, format: \"csv\" });\n\n  return streamCsv(publicRows, {\n    headers: [\"order_id\", \"status\", \"total\", \"placed_at\"],\n    contentType: \"text/csv; charset=utf-8\",\n  });\n}\n```\n\n永続化rowには内部項目も含まれる:\n\n```ts\ntype OrderRow = {\n  tenantId: string;\n  orderId: string;\n  status: OrderStatus;\n  total: string;\n  placedAt: string;\n  fraudScore: number;\n  internalNote: string | null;\n};\n\ntype PublicOrderExportRow = {\n  order_id: string;\n  status: OrderStatus;\n  total: string;\n  placed_at: string;\n};\n```\n\n新要件:\n\n- query`format=csv|ndjson`で選択し、省略時はCSV。不正値はdataを読まず400。\n- NDJSONは1行1 JSON object、UTF-8、末尾newlineあり、`application/x-ndjson; charset=utf-8`。\n- 両形式のrow集合、順序、filter、10,000件上限、公開項目は同一。\n- 認可とtenant scopeはserializer選択より前に確定し、repository queryは`streamOrders(filter)`だけを使う。\n- `fraudScore`と`internalNote`はどちらにも出さない。\n- 監査eventは1 requestにつき1件で、実際のformatを記録する。\n- CSVの既存出力はbyte-for-byteで変えない。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "0805d9a11ea6892cee40d024c17fd0e8eab0dea63e998244b0575fdde8256cdd",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:35:51.257166+00:00",
+  "finished_at": "2026-09-02T05:38:55.300571+00:00",
+  "returncode": 0
+}

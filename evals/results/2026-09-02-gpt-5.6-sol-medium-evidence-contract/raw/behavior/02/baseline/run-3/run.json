@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "02",
+  "mode": "baseline",
+  "run": 3,
+  "prompt": "次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "a632a87aeba93590e942f1d819b36cee36aedc38ed1db2fb03feed86f704bff6",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T03:43:45.295759+00:00",
+  "finished_at": "2026-09-02T03:44:41.264562+00:00",
+  "returncode": 0
+}

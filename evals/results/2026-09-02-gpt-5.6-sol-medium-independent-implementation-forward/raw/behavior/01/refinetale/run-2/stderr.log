@@ -1,0 +1,10 @@
+Reading additional input from stdin...
+2026-09-02T05:55:51.883939Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:55:51.884160Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:55:51.938282Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:55:51.948088Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:55:52.760069Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:55:52.760089Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:57:59.297676Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/zsh -c 'rm -rf ./__pycache__ ./tests/__pycache__; date -u +%Y-%m-%dT%H:%M:%SZ; git status --short --ignored; find .agent -maxdepth 1 -type f -print'`: CreateProcess { message: "Rejected(\"`/bin/zsh -c 'rm -rf ./__pycache__ ./tests/__pycache__; date -u +%Y-%m-%dT%H:%M:%SZ; git status --short --ignored; find .agent -maxdepth 1 -type f -print'` rejected: rm -f style commands are not permitted. Use a safer approach\")" }
+2026-09-02T05:58:35.457658Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T05:58:35.497716Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a060b0-2597-75f0-a8c7-8443cbb6fb08.1788328551904621000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

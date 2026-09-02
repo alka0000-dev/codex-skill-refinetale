@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a05ffe-0889-7b23-8c86-0e7c8aa7f0d9"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Feature flag（機能フラグ）とは、アプリの機能をコード変更なしでオン・オフできる仕組みです。  \n新機能を一部のユーザーだけに試したり、段階的に公開したりできます。  \n問題が起きたときに機能をすぐ無効化できるため、安全なリリースに役立ちます。"}}
+{"type":"turn.completed","usage":{"input_tokens":18810,"cached_input_tokens":9984,"cache_write_input_tokens":0,"output_tokens":122,"reasoning_output_tokens":28}}

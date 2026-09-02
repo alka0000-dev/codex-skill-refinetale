@@ -1,0 +1,14 @@
+{
+  "category": "routing",
+  "fixture": "A",
+  "mode": "invoke",
+  "run": 2,
+  "prompt": "Reactの選択UIで、配列の `selectedIds` とAPI送信用文字列の `selectedIdsForRequest` を別々にstate管理しています。全選択機能を追加したいので、既存契約を維持しながら状態の重複を整理し、変更方針とテスト観点を出してください。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "736785ce678dfd2bbbbfc331fffad1644b4a23723ce45118c8bf04d7889c3726",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:44:55.401869+00:00",
+  "finished_at": "2026-09-02T02:46:10.865739+00:00",
+  "returncode": 0
+}

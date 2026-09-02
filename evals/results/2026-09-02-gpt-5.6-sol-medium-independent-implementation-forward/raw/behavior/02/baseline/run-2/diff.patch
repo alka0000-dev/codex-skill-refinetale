@@ -1,0 +1,24 @@
+diff --git a/delivery.py b/delivery.py
+index d2801c4..459612b 100644
+--- a/delivery.py
++++ b/delivery.py
+@@ -6,5 +6,17 @@ class PermanentFailure(Exception):
+     pass
+ 
+ 
+-def deliver(sender, message):
+-    return sender.send(message)
++def deliver(sender, message, max_attempts=3):
++    if (
++        isinstance(max_attempts, bool)
++        or not isinstance(max_attempts, int)
++        or max_attempts <= 0
++    ):
++        raise ValueError("max_attempts must be a positive integer")
++
++    for attempt in range(max_attempts):
++        try:
++            return sender.send(message)
++        except TemporaryFailure:
++            if attempt == max_attempts - 1:
++                raise

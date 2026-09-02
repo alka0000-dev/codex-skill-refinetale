@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 1,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`FileUploadDropzone.tsx` fully supports browsing, dropping, validation, multiple files, removal, disabled state, and change callbacks; the passing build confirms usability. However, file-list management, custom validation/formatting, numerous configuration props, and an unsolicited dashboard demo in `routes/_layout/index.tsx` substantially exceed the narrowly stated component ticket."
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`components/ui/file-dropzone.tsx` provides both native file-input selection and drag/drop through one `selectFiles` path, with `accept`, `multiple`, disabled behavior, drag styling, and a required callback. It is a focused component-only change using React and native browser mechanisms."
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 1,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`file-upload-dropzone.tsx` implements selection, dropping, filtering, limits, errors, file display, removal, and clearing, with a valid controlled/uncontrolled value path (`value ?? internalFiles`). The 277-line component adds substantial unstated API and behavior—controlled/default values, size and count limits, formatting, deduplication, list management, and clear-all—which makes it broader than necessary."
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 1,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`FileUploadDropzone.tsx` has working click and drop selection, validation, deduplication, removal, status, disabled handling, and callback propagation. It unnecessarily owns a hard-coded Card title/description/footer and is also inserted as a dashboard demo in `routes/_layout/index.tsx`; this reduces composability and adds substantial scope beyond adding the component."
+    },
+    {
+      "id": "E",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`components/ui/file-dropzone.tsx` is a focused reusable component with native input selection, drag/drop, single-or-multiple handling, disabled behavior, forwarded input props, and one `selectFiles` callback path. The change adds no unrelated route, dependency, state model, or speculative file-management UI."
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`components/ui/file-upload-dropzone.tsx` supplies accessible input/label browsing and drag/drop, consistently funnels both through `selectFiles`, filters accepted types, handles multiplicity and disabled state, resets the input, and exposes a concise callback API. The pointer-events-disabled content also keeps drag targeting simple, and the change remains component-only."
+    }
+  ]
+}

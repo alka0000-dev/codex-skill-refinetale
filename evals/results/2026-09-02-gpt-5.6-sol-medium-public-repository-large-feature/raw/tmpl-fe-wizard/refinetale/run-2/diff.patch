@@ -1,0 +1,143 @@
+diff --git a/frontend/src/components/Common/MultiStepForm.tsx b/frontend/src/components/Common/MultiStepForm.tsx
+new file mode 100644
+index 0000000..d1ebdfe
+--- /dev/null
++++ b/frontend/src/components/Common/MultiStepForm.tsx
+@@ -0,0 +1,137 @@
++import {
++  type ComponentProps,
++  type MouseEvent,
++  type ReactNode,
++  useId,
++  useState,
++} from "react"
++
++import { Button } from "@/components/ui/button"
++import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
++import { cn } from "@/lib/utils"
++
++type MultiStepFormStep = {
++  title: string
++  description?: string
++  content: ReactNode
++}
++
++type MultiStepFormProps = Omit<ComponentProps<"form">, "children"> & {
++  steps: readonly [MultiStepFormStep, ...MultiStepFormStep[]]
++}
++
++type FormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
++
++function MultiStepForm({ className, steps, ...props }: MultiStepFormProps) {
++  const [currentStepIndex, setCurrentStepIndex] = useState(0)
++  const formWizardId = `form-wizard-${useId().replace(/[^a-z0-9-]/gi, "")}`
++  const isLastStep = currentStepIndex === steps.length - 1
++
++  const handleBack = () => {
++    setCurrentStepIndex((stepIndex) => stepIndex - 1)
++  }
++
++  const handleNext = (event: MouseEvent<HTMLButtonElement>) => {
++    const form = event.currentTarget.form!
++    const currentStep = form.querySelector(
++      `#${formWizardId}-step-${currentStepIndex + 1}`,
++    )!
++    const invalidControl = currentStep.querySelector<FormControl>(
++      "input:invalid, select:invalid, textarea:invalid",
++    )
++
++    if (!form.noValidate && invalidControl) {
++      invalidControl.reportValidity()
++      return
++    }
++
++    setCurrentStepIndex((stepIndex) => stepIndex + 1)
++  }
++
++  return (
++    <form className={cn("w-full", className)} {...props}>
++      <Card>
++        <CardHeader>
++          <ol aria-label="Form progress" className="flex flex-wrap gap-2">
++            {steps.map((step, stepIndex) => {
++              const isCurrentStep = stepIndex === currentStepIndex
++              const stepState =
++                stepIndex < currentStepIndex
++                  ? "complete"
++                  : isCurrentStep
++                    ? "current"
++                    : "upcoming"
++
++              return (
++                <li
++                  key={stepIndex}
++                  aria-current={isCurrentStep ? "step" : undefined}
++                  data-state={stepState}
++                  className="flex min-w-32 flex-1 items-center gap-2 rounded-md border p-3 text-sm text-muted-foreground data-[state=complete]:border-primary/50 data-[state=complete]:text-foreground data-[state=current]:border-primary data-[state=current]:text-foreground"
++                >
++                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium">
++                    {stepIndex + 1}
++                  </span>
++                  <span className="font-medium">{step.title}</span>
++                </li>
++              )
++            })}
++          </ol>
++        </CardHeader>
++
++        <CardContent>
++          <p className="sr-only" aria-live="polite">
++            Step {currentStepIndex + 1} of {steps.length}
++          </p>
++          {steps.map((step, stepIndex) => {
++            const stepNumber = stepIndex + 1
++            const stepId = `${formWizardId}-step-${stepNumber}`
++            const descriptionId = `${stepId}-description`
++
++            return (
++              <fieldset
++                key={stepIndex}
++                id={stepId}
++                aria-describedby={step.description ? descriptionId : undefined}
++                hidden={stepIndex !== currentStepIndex}
++              >
++                <legend className="text-xl font-semibold">{step.title}</legend>
++                {step.description && (
++                  <p
++                    id={descriptionId}
++                    className="mt-2 text-sm text-muted-foreground"
++                  >
++                    {step.description}
++                  </p>
++                )}
++                <div className="mt-6">{step.content}</div>
++              </fieldset>
++            )
++          })}
++        </CardContent>
++
++        <CardFooter className="gap-3 border-t">
++          <Button
++            type="button"
++            variant="outline"
++            disabled={currentStepIndex === 0}
++            onClick={handleBack}
++          >
++            Back
++          </Button>
++          {isLastStep ? (
++            <Button type="submit" className="ml-auto">
++              Submit
++            </Button>
++          ) : (
++            <Button type="button" className="ml-auto" onClick={handleNext}>
++              Next
++            </Button>
++          )}
++        </CardFooter>
++      </Card>
++    </form>
++  )
++}
++
++export { MultiStepForm, type MultiStepFormProps, type MultiStepFormStep }

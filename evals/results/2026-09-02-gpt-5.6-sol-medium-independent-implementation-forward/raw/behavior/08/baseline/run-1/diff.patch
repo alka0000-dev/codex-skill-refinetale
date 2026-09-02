@@ -1,0 +1,26 @@
+diff --git a/inventory.py b/inventory.py
+index 2059edc..cdf746d 100644
+--- a/inventory.py
++++ b/inventory.py
+@@ -14,3 +14,21 @@ class Inventory:
+         self.stock[sku] = updated
+         self.audit.append((sku, delta, updated))
+         return updated
++
++    def transfer_to(self, destination, sku, quantity):
++        if not isinstance(destination, Inventory):
++            raise ValueError("destination must be an Inventory")
++        if not isinstance(sku, str) or not sku:
++            raise ValueError("sku must be a non-empty string")
++        if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity <= 0:
++            raise ValueError("quantity must be a positive integer")
++
++        source_quantity = self.stock.get(sku, 0)
++        if destination is self:
++            return source_quantity
++        if source_quantity < quantity:
++            raise InsufficientStock(sku)
++
++        source_quantity = self.adjust(sku, -quantity)
++        destination_quantity = destination.adjust(sku, quantity)
++        return source_quantity, destination_quantity

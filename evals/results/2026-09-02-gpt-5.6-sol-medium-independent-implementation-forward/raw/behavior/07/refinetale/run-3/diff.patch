@@ -1,0 +1,48 @@
+diff --git a/router.py b/router.py
+index 3bd4224..01bb383 100644
+--- a/router.py
++++ b/router.py
+@@ -2,15 +2,43 @@ class NotFound(Exception):
+     pass
+ 
+ 
++def _validate_path(path):
++    if not isinstance(path, str) or not path or not path.startswith("/"):
++        raise ValueError(path)
++
++
+ class Router:
+     def __init__(self):
+         self._routes = {}
++        self._mounts = {}
+ 
+     def add(self, path, handler):
+         self._routes[path] = handler
+ 
++    def mount(self, prefix, handler):
++        _validate_path(prefix)
++        self._mounts[prefix.rstrip("/") or "/"] = handler
++
+     def resolve(self, path):
++        _validate_path(path)
+         try:
+             return self._routes[path]
+         except KeyError:
++            pass
++
++        try:
++            prefix = max(
++                (
++                    prefix
++                    for prefix in self._mounts
++                    if prefix == "/"
++                    or path == prefix
++                    or path.startswith(prefix + "/")
++                ),
++                key=len,
++            )
++        except ValueError:
+             raise NotFound(path)
++
++        remainder = path if prefix == "/" else path[len(prefix) :] or "/"
++        return self._mounts[prefix], remainder

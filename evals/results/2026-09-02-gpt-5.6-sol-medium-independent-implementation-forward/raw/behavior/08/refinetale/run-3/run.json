@@ -1,0 +1,16 @@
+{
+  "fixture": "08",
+  "fixture_name": "08-inventory-transfer",
+  "mode": "refinetale",
+  "run": 3,
+  "prompt": "# 在庫移動\n\n`workspace/` の `Inventory` に、別倉庫への在庫移動を追加してください。\n\n要件:\n\n- `source.transfer_to(destination, sku, quantity)` を追加する。\n- quantityはboolではない正のint、skuは空でないstr、destinationはInventoryでなければならない。不正値は `ValueError` とし状態を変えない。\n- sourceとdestinationが同一なら、有効な入力について何も変更せず監査ログも追加せず、現在の在庫数を返す。\n- source在庫が不足なら `InsufficientStock` とし、両倉庫の在庫・監査ログを変えない。\n- 成功時はsourceから減算後、destinationへ加算し、それぞれの既存 `adjust` を使う。\n- 成功時の戻り値は `(sourceの新在庫数, destinationの新在庫数)`。\n- 監査ログの順序と既存adjustの契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "971b22b9577ba91ffe8b042da04127f8413de8f7b40c7ae663aaf5eb9f150300",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:39:40.433330+00:00",
+  "finished_at": "2026-09-02T05:42:31.339713+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "2400a25484e05d3d481a9e45f0091670f034b71c1675ab5cc3f004c166c6fe2f"
+}

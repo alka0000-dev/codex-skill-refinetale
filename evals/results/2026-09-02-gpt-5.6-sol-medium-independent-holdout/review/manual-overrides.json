@@ -1,0 +1,11 @@
+{
+  "fixture-02": {
+    "D": {
+      "changes": {
+        "S3": 2,
+        "total": 9
+      },
+      "reason": "The fixture requires appending ' (copy)' once to the source name. It does not require suppressing a suffix already present in the source name. Candidate D appends once during initialization, so the judge's idempotence requirement was unsupported. The pass outcome is unchanged."
+    }
+  }
+}

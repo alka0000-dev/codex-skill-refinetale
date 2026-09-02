@@ -1,0 +1,56 @@
+diff --git a/inventory.py b/inventory.py
+index 2059edc..614d5c6 100644
+--- a/inventory.py
++++ b/inventory.py
+@@ -14,3 +14,24 @@ class Inventory:
+         self.stock[sku] = updated
+         self.audit.append((sku, delta, updated))
+         return updated
++
++    def transfer_to(self, destination, sku, quantity):
++        if (
++            not isinstance(destination, Inventory)
++            or not isinstance(sku, str)
++            or not sku
++            or not isinstance(quantity, int)
++            or isinstance(quantity, bool)
++            or quantity <= 0
++        ):
++            raise ValueError
++
++        if self is destination:
++            return self.stock.get(sku, 0)
++
++        if self.stock.get(sku, 0) < quantity:
++            raise InsufficientStock(sku)
++
++        source_stock = self.adjust(sku, -quantity)
++        destination_stock = destination.adjust(sku, quantity)
++        return source_stock, destination_stock
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 2d4ecdd..d373042 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -24,12 +24,21 @@ class RequirementTests(unittest.TestCase):
+         self.assertEqual((inventory.stock, inventory.audit), ({"book": 4}, []))
+ 
+     def test_invalid_input_is_atomic(self):
+-        cases = [("", 1, Inventory()), ("book", 0, Inventory()), ("book", True, Inventory()), ("book", 1, object())]
++        cases = [
++            ("", 1, Inventory({"book": 2})),
++            (None, 1, Inventory({"book": 2})),
++            ("book", 0, Inventory({"book": 2})),
++            ("book", -1, Inventory({"book": 2})),
++            ("book", True, Inventory({"book": 2})),
++            ("book", 1, object()),
++        ]
+         for sku, quantity, destination in cases:
+             source = Inventory({"book": 3})
+             with self.subTest(sku=sku, quantity=quantity), self.assertRaises(ValueError):
+                 source.transfer_to(destination, sku, quantity)
+             self.assertEqual((source.stock, source.audit), ({"book": 3}, []))
++            if isinstance(destination, Inventory):
++                self.assertEqual((destination.stock, destination.audit), ({"book": 2}, []))
+ 
+ 
+ if __name__ == "__main__":

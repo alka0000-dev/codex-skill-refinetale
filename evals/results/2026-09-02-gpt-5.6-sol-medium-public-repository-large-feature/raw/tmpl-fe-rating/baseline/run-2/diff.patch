@@ -1,0 +1,130 @@
+diff --git a/frontend/src/components/ui/star-rating.tsx b/frontend/src/components/ui/star-rating.tsx
+new file mode 100644
+index 0000000..0089272
+--- /dev/null
++++ b/frontend/src/components/ui/star-rating.tsx
+@@ -0,0 +1,124 @@
++import * as React from "react"
++import { StarIcon } from "lucide-react"
++
++import { cn } from "@/lib/utils"
++
++type StarRatingProps = Omit<
++  React.ComponentProps<"div">,
++  "defaultValue" | "onChange"
++> & {
++  defaultValue?: number
++  disabled?: boolean
++  label?: string
++  max?: number
++  name?: string
++  onValueChange?: (value: number) => void
++  required?: boolean
++  value?: number
++}
++
++function StarRating({
++  className,
++  defaultValue = 0,
++  disabled = false,
++  label = "Rating",
++  max = 5,
++  name,
++  onBlur,
++  onMouseLeave,
++  onValueChange,
++  required = false,
++  value,
++  ...props
++}: StarRatingProps) {
++  const generatedName = React.useId()
++  const [internalValue, setInternalValue] = React.useState(defaultValue)
++  const [previewValue, setPreviewValue] = React.useState<number | null>(null)
++  const starCount = Number.isFinite(max) ? Math.max(1, Math.floor(max)) : 5
++  const selectedValue = value ?? internalValue
++  const displayedValue = previewValue ?? selectedValue
++  const inputName = name ?? `${generatedName}-rating`
++
++  const handleValueChange = (nextValue: number) => {
++    if (value === undefined) {
++      setInternalValue(nextValue)
++    }
++
++    onValueChange?.(nextValue)
++  }
++
++  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
++    if (!event.currentTarget.contains(event.relatedTarget)) {
++      setPreviewValue(null)
++    }
++
++    onBlur?.(event)
++  }
++
++  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
++    setPreviewValue(null)
++    onMouseLeave?.(event)
++  }
++
++  return (
++    <div
++      role="radiogroup"
++      aria-label={label}
++      aria-disabled={disabled || undefined}
++      aria-required={required || undefined}
++      data-disabled={disabled || undefined}
++      data-slot="star-rating"
++      className={cn("flex w-fit items-center", className)}
++      onBlur={handleBlur}
++      onMouseLeave={handleMouseLeave}
++      {...props}
++    >
++      {Array.from({ length: starCount }, (_, index) => {
++        const ratingValue = index + 1
++        const isFilled = ratingValue <= displayedValue
++
++        return (
++          <label
++            key={ratingValue}
++            data-slot="star-rating-item"
++            className={cn(
++              "relative inline-flex size-9 items-center justify-center rounded-md transition-colors has-[:focus-visible]:ring-ring/50 has-[:focus-visible]:ring-[3px]",
++              disabled
++                ? "cursor-not-allowed opacity-50"
++                : "cursor-pointer hover:bg-accent"
++            )}
++            onMouseEnter={() => {
++              if (!disabled) {
++                setPreviewValue(ratingValue)
++              }
++            }}
++          >
++            <input
++              type="radio"
++              className="sr-only"
++              name={inputName}
++              value={ratingValue}
++              checked={ratingValue === selectedValue}
++              aria-label={`${ratingValue} of ${starCount} stars`}
++              disabled={disabled}
++              required={required}
++              onChange={() => handleValueChange(ratingValue)}
++              onFocus={() => setPreviewValue(ratingValue)}
++            />
++            <StarIcon
++              aria-hidden="true"
++              className={cn(
++                "size-6 transition-colors",
++                isFilled
++                  ? "fill-amber-400 text-amber-400"
++                  : "fill-transparent text-muted-foreground/60"
++              )}
++            />
++          </label>
++        )
++      })}
++    </div>
++  )
++}
++
++export { StarRating, type StarRatingProps }

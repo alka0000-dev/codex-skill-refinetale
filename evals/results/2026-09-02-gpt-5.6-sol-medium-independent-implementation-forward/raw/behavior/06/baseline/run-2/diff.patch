@@ -1,0 +1,29 @@
+diff --git a/event_bus.py b/event_bus.py
+index a93e1e6..369ec31 100644
+--- a/event_bus.py
++++ b/event_bus.py
+@@ -6,8 +6,23 @@ class EventBus:
+         self._handlers.setdefault(event, []).append(handler)
+         return handler
+ 
++    def off(self, event, handler):
++        handlers = self._handlers.get(event)
++        if handlers is None:
++            return False
++
++        for index, registered_handler in enumerate(handlers):
++            if registered_handler is handler:
++                del handlers[index]
++                if not handlers:
++                    del self._handlers[event]
++                return True
++
++        return False
++
+     def emit(self, event, payload):
+         results = []
+-        for handler in self._handlers.get(event, []):
++        handlers = tuple(self._handlers.get(event, ()))
++        for handler in handlers:
+             results.append(handler(payload))
+         return results

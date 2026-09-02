@@ -1,0 +1,63 @@
+diff --git a/router.py b/router.py
+index 3bd4224..2367a59 100644
+--- a/router.py
++++ b/router.py
+@@ -5,12 +5,34 @@ class NotFound(Exception):
+ class Router:
+     def __init__(self):
+         self._routes = {}
++        self._mounts = {}
+ 
+     def add(self, path, handler):
+         self._routes[path] = handler
+ 
++    def mount(self, prefix, handler):
++        self._validate_path(prefix)
++        prefix = prefix.rstrip("/") or "/"
++        self._mounts[prefix] = handler
++
+     def resolve(self, path):
+-        try:
++        self._validate_path(path)
++        if path in self._routes:
+             return self._routes[path]
+-        except KeyError:
++
++        matching_prefixes = (
++            prefix
++            for prefix in self._mounts
++            if prefix == "/" or path == prefix or path.startswith(prefix + "/")
++        )
++        prefix = max(matching_prefixes, key=len, default=None)
++        if prefix is None:
+             raise NotFound(path)
++
++        remainder = path if prefix == "/" else path[len(prefix):] or "/"
++        return self._mounts[prefix], remainder
++
++    @staticmethod
++    def _validate_path(path):
++        if not isinstance(path, str) or not path.startswith("/"):
++            raise ValueError(path)
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 9770e7a..45edf26 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -34,11 +34,14 @@ class RequirementTests(unittest.TestCase):
+ 
+     def test_invalid_values_do_not_register(self):
+         router = Router()
+-        for prefix in (None, "", "api"):
++        mounted = object()
++        router.mount("/valid", mounted)
++        for prefix in (None, 1, "", "api"):
+             with self.subTest(prefix=prefix), self.assertRaises(ValueError):
+                 router.mount(prefix, object())
+-        self.assertEqual(getattr(router, "_mounts", {}), {})
+-        for path in (None, "", "api"):
++        self.assertEqual(router.resolve("/valid"), (mounted, "/"))
++        self.assertEqual(len(router._mounts), 1)
++        for path in (None, 1, "", "api"):
+             with self.subTest(path=path), self.assertRaises(ValueError):
+                 router.resolve(path)
+ 

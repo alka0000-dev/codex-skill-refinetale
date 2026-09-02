@@ -1,0 +1,283 @@
+diff --git a/frontend/src/components/ui/file-upload-dropzone.tsx b/frontend/src/components/ui/file-upload-dropzone.tsx
+new file mode 100644
+index 0000000..5f1a687
+--- /dev/null
++++ b/frontend/src/components/ui/file-upload-dropzone.tsx
+@@ -0,0 +1,277 @@
++import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react"
++import * as React from "react"
++
++import { Button } from "@/components/ui/button"
++import { cn } from "@/lib/utils"
++
++type FileUploadDropzoneProps = Omit<
++  React.ComponentProps<"input">,
++  "children" | "defaultValue" | "onChange" | "type" | "value"
++> & {
++  className?: string
++  defaultValue?: File[]
++  description?: string
++  maxFiles?: number
++  maxSize?: number
++  onValueChange?: (files: File[]) => void
++  title?: string
++  value?: File[]
++}
++
++const formatFileSize = (size: number) => {
++  if (size < 1024) return `${size} B`
++
++  const units = ["KB", "MB", "GB", "TB"]
++  let displaySize = size / 1024
++  let unitIndex = 0
++
++  while (displaySize >= 1024 && unitIndex < units.length - 1) {
++    displaySize /= 1024
++    unitIndex += 1
++  }
++
++  return `${displaySize.toFixed(displaySize >= 10 ? 0 : 1)} ${units[unitIndex]}`
++}
++
++const isFileAccepted = (file: File, accept?: string) => {
++  if (!accept) return true
++
++  return accept.split(",").some((acceptedType) => {
++    const normalizedType = acceptedType.trim().toLowerCase()
++    const fileName = file.name.toLowerCase()
++    const fileType = file.type.toLowerCase()
++
++    if (normalizedType.startsWith(".")) {
++      return fileName.endsWith(normalizedType)
++    }
++
++    if (normalizedType.endsWith("/*")) {
++      return fileType.startsWith(normalizedType.slice(0, -1))
++    }
++
++    return fileType === normalizedType
++  })
++}
++
++const getFileKey = (file: File) =>
++  `${file.name}-${file.size}-${file.lastModified}`
++
++function FileUploadDropzone({
++  accept,
++  className,
++  defaultValue = [],
++  description = "or click to browse",
++  disabled = false,
++  maxFiles,
++  maxSize,
++  multiple = false,
++  onValueChange,
++  title = "Drag and drop files here",
++  value,
++  ...inputProps
++}: FileUploadDropzoneProps) {
++  const inputRef = React.useRef<HTMLInputElement>(null)
++  const dragDepthRef = React.useRef(0)
++  const [internalFiles, setInternalFiles] = React.useState(defaultValue)
++  const [isDragging, setIsDragging] = React.useState(false)
++  const [errorMessage, setErrorMessage] = React.useState<string>()
++  const files = value ?? internalFiles
++  const fileLimit = multiple ? maxFiles : 1
++
++  const updateFiles = React.useCallback(
++    (nextFiles: File[]) => {
++      if (value === undefined) setInternalFiles(nextFiles)
++      onValueChange?.(nextFiles)
++    },
++    [onValueChange, value]
++  )
++
++  const addFiles = React.useCallback(
++    (incomingFiles: File[]) => {
++      const acceptedFiles = incomingFiles.filter(
++        (file) =>
++          isFileAccepted(file, accept) &&
++          (maxSize === undefined || file.size <= maxSize)
++      )
++
++      if (acceptedFiles.length !== incomingFiles.length) {
++        setErrorMessage("Some files do not match the allowed type or size.")
++      } else {
++        setErrorMessage(undefined)
++      }
++
++      if (acceptedFiles.length === 0) return
++
++      const nextFiles = multiple
++        ? [...files, ...acceptedFiles].filter(
++            (file, index, allFiles) =>
++              allFiles.findIndex(
++                (candidate) => getFileKey(candidate) === getFileKey(file)
++              ) === index
++          )
++        : acceptedFiles.slice(0, 1)
++
++      if (fileLimit !== undefined && nextFiles.length > fileLimit) {
++        setErrorMessage(`You can upload up to ${fileLimit} files.`)
++        updateFiles(nextFiles.slice(0, fileLimit))
++        return
++      }
++
++      updateFiles(nextFiles)
++    },
++    [accept, fileLimit, files, maxSize, multiple, updateFiles]
++  )
++
++  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
++    addFiles(Array.from(event.target.files ?? []))
++    event.target.value = ""
++  }
++
++  const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    if (disabled) return
++
++    dragDepthRef.current += 1
++    setIsDragging(true)
++  }
++
++  const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    if (!disabled) event.dataTransfer.dropEffect = "copy"
++  }
++
++  const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    if (disabled) return
++
++    dragDepthRef.current -= 1
++    if (dragDepthRef.current === 0) setIsDragging(false)
++  }
++
++  const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    dragDepthRef.current = 0
++    setIsDragging(false)
++    if (disabled) return
++
++    addFiles(Array.from(event.dataTransfer.files))
++  }
++
++  const handleRemove = (fileToRemove: File) => {
++    updateFiles(
++      files.filter((file) => getFileKey(file) !== getFileKey(fileToRemove))
++    )
++  }
++
++  const handleClear = () => {
++    updateFiles([])
++    setErrorMessage(undefined)
++    if (inputRef.current) inputRef.current.value = ""
++  }
++
++  return (
++    <div className={cn("grid gap-3", className)} data-slot="file-upload">
++      <label
++        data-slot="file-upload-dropzone"
++        data-dragging={isDragging || undefined}
++        data-disabled={disabled || undefined}
++        className={cn(
++          "group flex min-h-52 w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-input bg-muted/20 px-6 py-8 text-center transition-colors",
++          "hover:border-primary/60 hover:bg-primary/5 focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
++          "data-[dragging]:border-primary data-[dragging]:bg-primary/10",
++          "data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
++        )}
++        onDragEnter={handleDragEnter}
++        onDragLeave={handleDragLeave}
++        onDragOver={handleDragOver}
++        onDrop={handleDrop}
++      >
++        <input
++          ref={inputRef}
++          type="file"
++          className="sr-only"
++          accept={accept}
++          disabled={disabled}
++          multiple={multiple}
++          onChange={handleInputChange}
++          {...inputProps}
++        />
++        <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-data-[dragging]:scale-110">
++          <UploadCloudIcon className="size-6" aria-hidden="true" />
++        </span>
++        <span className="grid gap-1">
++          <span className="font-medium">{title}</span>
++          <span className="text-sm text-muted-foreground">{description}</span>
++        </span>
++        {(accept || maxSize !== undefined) && (
++          <span className="text-xs text-muted-foreground">
++            {accept && `Accepted: ${accept}`}
++            {accept && maxSize !== undefined && " · "}
++            {maxSize !== undefined && `Up to ${formatFileSize(maxSize)}`}
++          </span>
++        )}
++      </label>
++
++      <div aria-live="polite">
++        {errorMessage && (
++          <p className="text-sm text-destructive" role="alert">
++            {errorMessage}
++          </p>
++        )}
++
++        {files.length > 0 && (
++          <div className="grid gap-2">
++            <div className="flex items-center justify-between gap-4">
++              <p className="text-sm font-medium">
++                {files.length} {files.length === 1 ? "file" : "files"} selected
++              </p>
++              <Button
++                type="button"
++                variant="ghost"
++                size="sm"
++                disabled={disabled}
++                onClick={handleClear}
++              >
++                Clear all
++              </Button>
++            </div>
++
++            <ul className="grid gap-2">
++              {files.map((file) => (
++                <li
++                  key={getFileKey(file)}
++                  className="flex items-center gap-3 rounded-lg border bg-card px-3 py-2"
++                >
++                  <FileIcon
++                    className="size-5 shrink-0 text-muted-foreground"
++                    aria-hidden="true"
++                  />
++                  <span className="min-w-0 flex-1">
++                    <span className="block truncate text-sm font-medium">
++                      {file.name}
++                    </span>
++                    <span className="block text-xs text-muted-foreground">
++                      {formatFileSize(file.size)}
++                    </span>
++                  </span>
++                  <Button
++                    type="button"
++                    variant="ghost"
++                    size="icon-sm"
++                    disabled={disabled}
++                    aria-label={`Remove ${file.name}`}
++                    onClick={() => handleRemove(file)}
++                  >
++                    <XIcon aria-hidden="true" />
++                  </Button>
++                </li>
++              ))}
++            </ul>
++          </div>
++        )}
++      </div>
++    </div>
++  )
++}
++
++export { FileUploadDropzone, type FileUploadDropzoneProps }

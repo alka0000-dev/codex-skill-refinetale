@@ -1,0 +1,95 @@
+{
+  "baseline": {
+    "runs": 18,
+    "passed_runs": 15,
+    "borderline_runs": 2,
+    "failed_runs": 0,
+    "critical_failures": 1,
+    "earned_points": 165,
+    "available_points": 180,
+    "score_rate": 0.9167,
+    "pass_rate": 0.8333,
+    "skill_trace_runs": 0,
+    "per_fixture": {
+      "01": {
+        "passed_runs": 2,
+        "points": 27,
+        "available_points": 30
+      },
+      "02": {
+        "passed_runs": 3,
+        "points": 27,
+        "available_points": 30
+      },
+      "03": {
+        "passed_runs": 1,
+        "points": 26,
+        "available_points": 30
+      },
+      "04": {
+        "passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "05": {
+        "passed_runs": 3,
+        "points": 28,
+        "available_points": 30
+      },
+      "06": {
+        "passed_runs": 3,
+        "points": 27,
+        "available_points": 30
+      }
+    }
+  },
+  "refinetale": {
+    "runs": 18,
+    "passed_runs": 17,
+    "borderline_runs": 0,
+    "failed_runs": 0,
+    "critical_failures": 1,
+    "earned_points": 177,
+    "available_points": 180,
+    "score_rate": 0.9833,
+    "pass_rate": 0.9444,
+    "skill_trace_runs": 15,
+    "per_fixture": {
+      "01": {
+        "passed_runs": 2,
+        "points": 28,
+        "available_points": 30
+      },
+      "02": {
+        "passed_runs": 3,
+        "points": 29,
+        "available_points": 30
+      },
+      "03": {
+        "passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "04": {
+        "passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "05": {
+        "passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "06": {
+        "passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      }
+    }
+  },
+  "difference": {
+    "pass_rate": 0.1111,
+    "score_rate": 0.0666,
+    "critical_failures": 0
+  }
+}

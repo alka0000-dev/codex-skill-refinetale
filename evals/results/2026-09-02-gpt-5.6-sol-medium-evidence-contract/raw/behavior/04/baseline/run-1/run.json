@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "04",
+  "mode": "baseline",
+  "run": 1,
+  "prompt": "次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "9d6097955a40cbfa4089d0c421cda0731bcb07bf6b25169083973cafe599b5b3",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T03:45:40.912876+00:00",
+  "finished_at": "2026-09-02T03:46:19.585328+00:00",
+  "returncode": 0
+}

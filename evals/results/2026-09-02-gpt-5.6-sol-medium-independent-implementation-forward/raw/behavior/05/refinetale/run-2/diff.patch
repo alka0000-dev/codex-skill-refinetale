@@ -1,0 +1,12 @@
+diff --git a/invoices.py b/invoices.py
+index 423570f..34bc424 100644
+--- a/invoices.py
++++ b/invoices.py
+@@ -10,3 +10,7 @@ class InvoiceService:
+     def publish_one(self, invoice):
+         body = self.render(invoice)
+         return self.publisher.publish(invoice["id"], body)
++
++    def publish_all(self, invoices):
++        rendered = [(invoice, self.render(invoice)) for invoice in invoices]
++        return [self.publisher.publish(invoice["id"], body) for invoice, body in rendered]

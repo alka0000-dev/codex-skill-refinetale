@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "05",
+  "mode": "baseline",
+  "run": 1,
+  "prompt": "次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/baseline",
+  "prompt_sha256": "bc0f7780ddb206a030d522a7d79fc9459f3106f68a8130f903dfcbb2c8ab792a",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:42:25.621232+00:00",
+  "finished_at": "2026-09-02T02:42:55.824738+00:00",
+  "returncode": 0
+}

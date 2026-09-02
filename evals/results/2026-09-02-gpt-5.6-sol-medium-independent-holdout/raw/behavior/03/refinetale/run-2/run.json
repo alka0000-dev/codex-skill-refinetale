@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "03",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "$refinetale\n\n取引ファイル取り込みにVendor Bを追加します。既存のVendor Aの安全性とデータ契約を維持しながら、実装差分を小さくした設計を提案してください。処理順、追加・変更する型や関数、Vendor B固有の変換、失敗時の扱い、テストを具体的に示してください。\n\n現在の取り込み処理:\n\n```ts\nexport async function importVendorA(input: ImportInput) {\n  verifyHmac(input.rawBody, input.signature, input.vendorSecret);\n  const bytes = await gunzipWithLimit(input.rawBody, 20 * MB);\n  const records = parseDelimited(bytes, { delimiter: \",\", header: true });\n  const rows = records.map(mapVendorAToCanonical).map((row) => CanonicalRowSchema.parse(row));\n  await persistNewTransactions(dedupe(rows, { key: (row) => `${row.vendor}:${row.externalId}` }));\n}\n```\n\n既存の正規化型:\n\n```ts\nconst CanonicalRowSchema = z.object({\n  vendor: z.enum([\"vendor_a\"]),\n  externalId: z.string().min(1),\n  amount: z.string().regex(/^\\d+\\.\\d{2}$/),\n  paidAt: z.string().datetime(),\n});\n```\n\nVendor Aの列:\n\n```text\nid,amount_decimal,paid_at_iso\na-17,12.30,2026-08-20T10:15:00Z\n```\n\nVendor Bの仕様:\n\n- 同じ署名方式、gzip形式、20 MB展開上限を使う。\n- 区切りはtabで、列は`transaction_ref`、`total_minor`、`paid_at_ms`。\n- `total_minor`は非負の整数文字列で小数部は2桁。例:`1230`は`12.30`。\n- `paid_at_ms`はUnix epoch milliseconds。\n\n```text\ntransaction_ref\\ttotal_minor\\tpaid_at_ms\nb-92\\t1230\\t1787220900000\n```\n\n既存契約:\n\n- HMACは圧縮されたraw bodyに対して、展開やparseより先に検証する。\n- 署名不正、展開上限超過、parse/validation errorのfileは1行も保存しない。\n- 永続化層は`CanonicalRow`だけを受け取り、Vendor固有DTOを受け取らない。\n- 同じ`externalId`でもVendorが異なれば別取引。同じVendor内だけ重複を除く。\n- Vendor Aの挙動は変えない。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "e8f273c56b8f4719f93331d2b968dcc3a0e545cda42879072817b8394a56b11c",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T04:30:59.944412+00:00",
+  "finished_at": "2026-09-02T04:33:14.551842+00:00",
+  "returncode": 0
+}

@@ -1,0 +1,17 @@
+{
+  "source_added_loc": 106,
+  "source_deleted_loc": 0,
+  "source_files": 1,
+  "new_source_files": 1,
+  "test_added_loc": 0,
+  "test_deleted_loc": 0,
+  "test_files": 0,
+  "dependency_manifest_changed": false,
+  "dependency_paths": [],
+  "source_paths": [
+    "frontend/src/components/ui/file-dropzone.tsx"
+  ],
+  "new_source_paths": [
+    "frontend/src/components/ui/file-dropzone.tsx"
+  ]
+}

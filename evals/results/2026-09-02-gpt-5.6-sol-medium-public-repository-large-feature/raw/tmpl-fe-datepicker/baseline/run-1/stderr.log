@@ -1,0 +1,10 @@
+Reading additional input from stdin...
+2026-09-02T09:49:40.840906Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T09:49:40.878457Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T09:49:40.882837Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T09:54:37.563230Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in <EVAL_WORKSPACE>/frontend/src/components/ui/date-picker.tsx:
+              aria-label="Previous month"
+              disabled={!canShowPreviousMonth}
+              onClick={() => setVisibleMonth((month) => addMonths(month, -1))}
+2026-09-02T09:55:51.944799Z ERROR codex_core::tools::router: error=patch rejected: writing outside of the project; rejected by user approval settings
+2026-09-02T09:58:19.013720Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a06186-361c-7312-aa62-3ec8db681dea.1788342580782207000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

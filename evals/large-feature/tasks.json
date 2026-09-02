@@ -1,0 +1,37 @@
+{
+  "source": {
+    "repository": "https://github.com/DietrichGebert/ponytail",
+    "commit": "2ed6c52c9d7e5e56942508591085fd45dea277d3",
+    "path": "benchmarks/agentic/tasks.py"
+  },
+  "template": {
+    "repository": "https://github.com/fastapi/full-stack-fastapi-template",
+    "commit": "cd83fc10ca20393e9ee50e3005e170c6929e047e"
+  },
+  "tasks": [
+    {
+      "id": "tmpl-fe-datepicker",
+      "prompt": "Add a date picker component to the frontend."
+    },
+    {
+      "id": "tmpl-fe-colorpicker",
+      "prompt": "Add a color picker component to the frontend."
+    },
+    {
+      "id": "tmpl-fe-command",
+      "prompt": "Add a command palette (searchable command menu) to the frontend."
+    },
+    {
+      "id": "tmpl-fe-dropzone",
+      "prompt": "Add a file upload dropzone component to the frontend."
+    },
+    {
+      "id": "tmpl-fe-wizard",
+      "prompt": "Add a multi-step form wizard component to the frontend."
+    },
+    {
+      "id": "tmpl-fe-rating",
+      "prompt": "Add a star rating input component to the frontend."
+    }
+  ]
+}

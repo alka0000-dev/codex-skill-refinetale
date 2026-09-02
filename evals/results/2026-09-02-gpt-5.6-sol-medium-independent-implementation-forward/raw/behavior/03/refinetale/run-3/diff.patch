@@ -1,0 +1,35 @@
+diff --git a/ledger.py b/ledger.py
+index cf73458..b0ef08a 100644
+--- a/ledger.py
++++ b/ledger.py
+@@ -14,3 +14,30 @@ class Ledger:
+         self.balances[account] = balance
+         self.audit.append((account, delta, balance))
+         return balance
++
++    def apply_batch(self, entries):
++        try:
++            entries = list(entries)
++        except TypeError as error:
++            raise ValueError("entries must be iterable") from error
++
++        for entry in entries:
++            if (
++                not isinstance(entry, tuple)
++                or len(entry) != 2
++                or not isinstance(entry[0], str)
++                or not entry[0]
++                or not isinstance(entry[1], int)
++                or isinstance(entry[1], bool)
++            ):
++                raise ValueError("entry must be a non-empty account and integer delta tuple")
++
++        balances = dict(self.balances)
++        for entry in entries:
++            account, delta = entry
++            balance = balances.get(account, 0) + delta
++            if balance < 0:
++                raise Overdraft(account)
++            balances[account] = balance
++
++        return [self.apply(account, delta) for account, delta in entries]

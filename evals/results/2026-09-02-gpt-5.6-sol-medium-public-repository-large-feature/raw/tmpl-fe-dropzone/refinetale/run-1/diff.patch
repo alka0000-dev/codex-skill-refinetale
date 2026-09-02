@@ -1,0 +1,112 @@
+diff --git a/frontend/src/components/ui/file-dropzone.tsx b/frontend/src/components/ui/file-dropzone.tsx
+new file mode 100644
+index 0000000..55e342f
+--- /dev/null
++++ b/frontend/src/components/ui/file-dropzone.tsx
+@@ -0,0 +1,106 @@
++import { UploadCloud } from "lucide-react"
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++interface FileDropzoneProps {
++  accept?: string
++  className?: string
++  disabled?: boolean
++  multiple?: boolean
++  onFilesSelected: (files: File[]) => void
++}
++
++function FileDropzone({
++  accept,
++  className,
++  disabled = false,
++  multiple = false,
++  onFilesSelected,
++}: FileDropzoneProps) {
++  const [isDragging, setIsDragging] = React.useState(false)
++
++  React.useEffect(() => {
++    if (disabled) {
++      setIsDragging(false)
++    }
++  }, [disabled])
++
++  const selectFiles = (fileList: FileList | null) => {
++    if (disabled || !fileList?.length) {
++      return
++    }
++
++    const files = Array.from(fileList)
++    onFilesSelected(multiple ? files : files.slice(0, 1))
++  }
++
++  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
++    selectFiles(event.currentTarget.files)
++    event.currentTarget.value = ""
++  }
++
++  const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++
++    if (!disabled) {
++      setIsDragging(true)
++    }
++  }
++
++  const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++  }
++
++  const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
++    if (
++      event.relatedTarget instanceof Node &&
++      event.currentTarget.contains(event.relatedTarget)
++    ) {
++      return
++    }
++
++    setIsDragging(false)
++  }
++
++  const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
++    event.preventDefault()
++    setIsDragging(false)
++    selectFiles(event.dataTransfer.files)
++  }
++
++  return (
++    <label
++      data-disabled={disabled || undefined}
++      data-dragging={isDragging || undefined}
++      aria-disabled={disabled}
++      className={cn(
++        "flex min-h-48 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-background p-6 text-center transition-[color,background-color,border-color,box-shadow] has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50 data-[dragging=true]:border-primary data-[dragging=true]:bg-accent data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50",
++        className,
++      )}
++      onDragEnter={handleDragEnter}
++      onDragLeave={handleDragLeave}
++      onDragOver={handleDragOver}
++      onDrop={handleDrop}
++    >
++      <input
++        type="file"
++        className="sr-only"
++        accept={accept}
++        disabled={disabled}
++        multiple={multiple}
++        onChange={handleChange}
++      />
++      <UploadCloud
++        aria-hidden="true"
++        className="size-8 text-muted-foreground"
++      />
++      <span className="font-medium">Drop files here or click to browse</span>
++      <span className="text-sm text-muted-foreground">
++        Select files from your device
++      </span>
++    </label>
++  )
++}
++
++export { FileDropzone, type FileDropzoneProps }

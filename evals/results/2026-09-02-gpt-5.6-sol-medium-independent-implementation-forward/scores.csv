@@ -1,0 +1,49 @@
+fixture,run,mode,judge_candidate,S1,S2,S3,S4,S5,total,outcome,critical_failure,verification_passed,skill_trace,manual_adjustment,adjustment_reason,evidence
+01,1,baseline,B,2,1,2,2,2,9,pass,False,True,False,False,,優先順位、送信境界、従来APIと戻り値は正しく、テストも全件成功。ただし全intにmath.isfiniteを直接適用するため、極端に大きい正のintではfloat変換時にOverflowErrorとなり、本来有効なintを受理できない。通常の無効値は送信前にValueErrorで拒否する。
+01,1,refinetale,F,2,1,2,2,2,9,pass,False,True,True,False,,優先順位、単一のtransport送信経路、path・timeoutの伝達、従来APIと戻り値は正しく、指定テストも全件成功。ただしmath.isfiniteをintにも直接適用するため、極端に大きい正のintでOverflowErrorとなり、有効なintを完全には受理できない。通常の無効値は送信前に拒否される。
+01,2,baseline,D,2,2,2,2,2,10,pass,False,True,False,False,,request指定→Client指定→5.0を正しく解決。boolを除く正のintと正の有限floatだけを受理し、無効値を送信前にValueErrorとする。既存transport経路へ一度だけtimeoutを渡し、生成・呼出し・戻り値の契約を維持。既存の要件・回帰テスト4件はすべて成功。
+01,2,refinetale,C,2,2,2,2,2,10,pass,False,True,True,False,,request値、Client値、既定値の解決が正しく、intは正値検査、floatは有限性も検査してbool・非数値・境界値を拒否する。transport.sendは一経路で一度だけ呼ばれ、pathとtimeoutおよび戻り値を維持。追加テストはNone、±無限大、NaN、非数値、送信抑止まで具体的に検証し全件成功。
+01,3,baseline,E,2,2,2,2,2,10,pass,False,True,False,False,,3段階の優先順位を正しく実装し、bool・非数値・0以下・非有限floatを明示位置で拒否する。正のintと有限floatは受理され、解決値は単一のsend呼出しへキーワードで渡される。従来APIと戻り値に回帰はなく、要件・既存テストは全件成功。
+01,3,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,request値→Client値→5.0の優先順位を全経路で実装。bool、非数値、0以下、NaN、±無限大を送信前に拒否し、正のint/floatを受理する。既存send経路へpathとtimeoutを一度だけ渡し、戻り値と従来呼出しを維持。要件テストも拡充され、指定コマンドは4件すべて成功。
+02,1,baseline,F,2,2,2,2,2,10,pass,False,True,False,False,,"実装はTemporaryFailureのみを指定回数まで再試行し、成功または非一時例外で直ちに終了する。max_attemptsはboolを除く正のintに送信前限定し、既存のdeliver(sender, message)も維持。成功・枯渇・例外・入力境界を扱う全5テストが成功し、重大失敗はない。"
+02,1,refinetale,D,2,2,2,2,2,10,pass,False,True,True,False,,減算rangeにより境界値を含め合計max_attempts回だけ試行し、残り1回でのTemporaryFailureを再送出する。成功は即時return、その他の例外は即時伝播。厳密な送信前検証、既存公開契約、単一経路を満たし、全5テストが成功。
+02,2,baseline,E,2,2,2,2,2,10,pass,False,True,False,False,,TemporaryFailure限定の再試行、上限到達時の再送出、成功時の即時returnが正しく実装されている。他例外は捕捉せず、bool・非int・非正値は送信前に拒否。既存2引数利用と単一送信経路を維持し、要件を網羅する5テストが終了コード0で成功。
+02,2,refinetale,C,2,2,2,2,2,10,pass,False,True,True,False,,TemporaryFailureだけを正確に最大max_attempts回試行し、成功後の追加呼び出しや非一時例外の再試行はない。boolを明示拒否し、正のint以外を送信前にValueErrorとする。単一のdeliver経路で既存呼び出しを維持し、全5テストが成功。
+02,3,baseline,A,2,2,2,2,2,10,pass,False,True,False,False,,range(max_attempts)でTemporaryFailureだけを上限まで再試行し、成功は即時return、最終一時失敗は再送出する。非一時例外は捕捉せず即時送出。bool・非int・0以下を送信前にValueErrorとし、既存2引数契約も維持。要件テスト5件が終了コード0で成功。
+02,3,refinetale,B,2,2,2,2,2,10,pass,False,True,True,False,,最終送信をループ外に置く構成で合計max_attempts回となり、TemporaryFailureのみ再試行する。成功および非一時例外では即時終了し、厳密な事前検証と既存契約も維持。テスト差分は既定3回、枯渇、例外同一性、入力境界まで検証し、検証コマンドは終了コード0。表示件数が差分上の想定6件ではなく5件なのは不整合だが、失敗の証拠ではない。
+03,1,baseline,D,2,2,2,2,2,10,pass,False,True,False,False,,全entryを先に厳密検証し、pending_balancesを入力順に更新して一時的な負残高もOverdraftにする。失敗前に公開状態を変更せず、成功時のみself.applyを順番に呼んで結果listを返す。指定unittestは必要な順序・不正入力・原子性・回帰を検証して終了コード0。
+03,1,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,複製残高を入力順に更新するため同一口座の途中負残高を検出する。全entryの形式・型検証と試算は実状態への反映前で、不正入力・Overdraft時とも残高とauditは不変。成功時のみself.applyを順番に呼び戻り値をlist化している。追加テストはapply経路も確認し、指定unittestは終了コード0。最終回答のテスト件数表記は検証出力と不一致だが実装・成否には影響しない。
+03,2,baseline,B,2,2,2,2,2,10,pass,False,True,False,False,,entriesを固定化後、全entryを型検証し、仮残高で入力順の当座貸越を判定する。事前失敗は無変更で、さらにself.apply実行中の例外にもbalancesとauditを復元する。成功時の更新境界はself.applyで順序と戻り値を維持。既存の同一口座順序・不正入力・原子性・回帰テストが終了コード0。
+03,2,refinetale,F,2,2,2,2,2,10,pass,False,True,True,False,,batchを固定化して全entryを事前検証し、複製残高による入力順試算で途中の負残高を検出する。失敗時にはbalances・auditへ到達せず、成功時のみself.applyを唯一の更新経路として用いる。追加差分は空batch、型境界、apply経路も検証し、指定unittestは終了コード0。最終回答の6件という記載は提示された検証出力4件と不一致だが、検証自体は成功している。
+03,3,baseline,E,2,2,2,2,2,10,pass,False,True,False,False,,各entryを検証しながらローカルのprojected_balancesだけを入力順に更新するため、同一口座の途中Overdraftを正しく検出する。後続entryが不正でも実状態とauditは未変更。成功後はvalidated_entriesをself.apply経由で順次反映し戻り値を保持する。指定テストは終了コード0。
+03,3,refinetale,C,2,2,2,2,2,10,pass,False,True,True,False,,全entryのtuple形式、account、deltaを副作用前に検証し、その後に複製残高を入力順で試算するため途中Overdraftを見逃さない。検証・試算中はbalancesとauditを変更せず、成功時だけself.applyを順次使用する。指定テストは同一口座順序、不正入力、rollback、既存apply回帰を含み終了コード0。
+04,1,baseline,B,2,2,2,2,2,10,pass,False,True,False,False,,v2 encode/decode、display_name既定値、v1移行を完全実装。version別に値を正規化した後、共通の非空文字列検証とProfile生成へ合流する。JSON・構造・version・必須値の境界もInvalidProfileで処理し、全4テスト成功。
+04,1,refinetale,D,2,2,2,2,2,10,pass,False,True,True,False,,v2保存・復元、既定表示名、v1移行を完全実装。version別正規化後に共通検証・生成を行う。追加テストでv2必須値の欠落・型不正・空文字列も補強し、全4テスト成功。
+04,2,baseline,A,2,2,1,2,2,9,pass,False,True,False,False,,Profileとencodeはv2契約を満たし、v1移行・既存コンストラクタ互換・全指定不正入力のInvalidProfile化を実装。検証は4件成功。v1/v2各分岐で検証とProfile生成を個別実行しており、共通経路への合流がないためS3は1。
+04,2,refinetale,C,2,2,2,2,2,10,pass,False,True,True,False,,v2契約とv1互換を完全に満たす。v1/v2をuser_id・display_nameへ明示的に正規化し、共通検証と生成へ合流。JSON例外はcauseを抑制してInvalidProfileへ変換され、全4テスト成功。
+04,3,baseline,F,2,2,1,2,2,9,pass,False,True,False,False,,v2 encode/decode、表示名既定値、v1読込互換、厳密なversion・必須値検証を実装し、JSON例外もcauseなしのInvalidProfileへ変換。全4テスト成功。共通文字列検証ヘルパーはあるが、v1/v2分岐内でProfile生成して直接returnするため、生成経路の共通合流がなくS3は1。
+04,3,refinetale,E,2,2,2,1,2,9,pass,False,True,True,False,,v2契約、v1互換、version別正規化から共通検証・生成への合流は完全。指定不正入力はいずれもInvalidProfileとなり全4テスト成功。ただしJSON例外をraise InvalidProfile() from errorで連鎖し、元例外をcauseとして外部から参照可能にしているため、元例外を漏らさない境界要件は不完全。規定外の例外型自体は送出されないためcritical failureではない。
+05,1,baseline,C,2,2,2,2,2,10,pass,False,True,False,False,,全renderを先行ループで完了させる二段階実装で、render例外時に副作用がない。publishは入力順で、失敗後の後続呼び出しもない。既存境界を再利用し、戻り値・空入力・publish_one互換性を満たす。検証コマンドは5件すべて成功。
+05,1,refinetale,D,2,2,2,2,2,10,pass,False,True,True,False,,render結果を全件準備した後にのみpublishを開始するため、準備失敗時の外部公開はない。公開は入力順で例外を変換せず、失敗直後に停止する。renderとpublisher.publishの既存境界を一貫して使用し、空入力と既存publish_oneも正しい。全5テスト成功。
+05,2,baseline,F,2,2,2,2,2,10,pass,False,True,False,False,,全件のrenderとID/body準備を終えた後にpublishするため、render失敗時は公開0件。publishは入力順で、例外発生後は内包表記が停止する。既存のrender・publisher境界を再利用し、空入力は[]、publish_oneは未変更。指定のunittestは5件すべて成功。
+05,2,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,全件をリスト内包表記でrenderしてからpublishへ進むため、render失敗時の公開は0件。publishも入力順の内包表記で、例外発生時に後続へ進まない。既存renderとpublisher.publishを再利用し、結果順・空入力・publish_one互換性も正しい。要件5件のテストがすべて成功。
+05,3,baseline,B,2,2,2,2,2,10,pass,False,True,False,False,,最初のループで全件をrenderしてIDとbodyを準備し、その完了後のみpublishする。publishは準備済みデータを入力順に処理し、例外時は内包表記が即時終了する。空入力は[]、publish_oneは未変更。準備失敗・公開失敗・順序・空・回帰を含む5テストが成功。
+05,3,refinetale,E,2,2,2,2,2,10,pass,False,True,True,False,,先行ループが全件renderを完了してから公開段階へ移る。公開内包表記は入力順を維持し、publish例外時に後続を実行しない。既存renderおよびpublisher.publishを使い、結果リスト、空入力、publish_one非回帰を満たす。要求を網羅する5テストが成功。
+06,1,baseline,C,2,2,2,2,2,10,pass,False,True,False,False,,offは先頭一致1件のみを削除し、未知eventにも未登録handlerにも副作用なくFalseを返す。emitは開始時にlistコピーするため、重複購読を潰さず登録順に各1回呼び、配信中のon/offは次回から反映される。例外はそのまま送出され、全5テストが終了コード0で成功。
+06,1,refinetale,B,2,2,2,2,2,10,pass,False,True,True,False,,offは既存listから最初の一致だけを削除し、未知event・未登録handlerでFalseを返して状態を変えない。emitのlistコピーにより配信中変更を次回へ延期し、重複と登録順を保持。例外伝播と戻り値契約を維持し、追加テストも適切。表示上のテスト件数は回答と検証出力で不一致だが、提示された検証コマンド自体は終了コード0で5テスト成功。
+06,2,baseline,F,2,2,2,2,2,10,pass,False,True,False,False,,identity比較で同一handlerの最初の登録だけを解除し、未知・未登録時はFalse、最後の解除後はeventキーも削除する。tuple snapshotが開始時購読者、重複、登録順を固定し、配信中変更を次回へ延期する。例外は捕捉せず既存戻り値も維持し、全5テストが終了コード0で成功。
+06,2,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,list.removeで先頭の一致1件のみ解除し、未知eventでは一時的な空listを使うため状態を生成しない。emitはlistで開始時snapshotを取得し、重複を保持したまま登録順に配信する。例外は捕捉せずon/emitの既存契約も維持。要件を網羅する5テストが終了コード0で成功。
+06,3,baseline,D,2,2,2,2,2,10,pass,False,True,False,False,,offはlist.removeにより最初の一致だけを解除し、未知・未登録時はFalseで状態を作らない。emit開始時にhandlersをコピーしているため進行中の変更に影響されず、重複と登録順も維持する。例外抑制や既存契約の変更はなく、要件テストを含む5テストが成功。
+06,3,refinetale,E,2,2,2,2,2,10,pass,False,True,True,False,,offは最初の一致だけを削除し、未知eventでは保存されない空listを使うため状態を生成しない。emitのlist snapshotにより重複、登録順、配信中変更の次回反映を満たし、例外も捕捉しない。on戻り値と未登録handlerの追加テストもある。回答の7件という記載と検証出力の5件には不一致があるが、提示された検証は終了コード0で成功。
+07,1,baseline,F,2,2,2,2,2,10,pass,False,True,False,False,,完全一致route優先、境界付き最長mount、rootを含むremainder、末尾スラッシュ正規化を明瞭に実装。入力検証は登録前に行われ、NotFoundも維持。テスト6件が成功。
+07,1,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,完全一致routeを先に返し、mountはsegment境界条件で最長prefixを選択する。末尾スラッシュ正規化、rootを含むremainder、非str・空・非/始まりの検証、無効登録時の状態不変を実装。追加テストを含む6件が成功。
+07,2,baseline,D,2,2,2,2,2,10,pass,False,True,False,False,,route優先と既存戻り値を維持し、segment境界で最長mountを解決する。複数の末尾スラッシュも正規化し、無効値を登録前に拒否。追加テスト差分は末尾スラッシュと状態不変も検証し、提示された検証はexit 0。
+07,2,refinetale,B,2,2,2,2,2,10,pass,False,True,False,False,,既存routeの戻り値を優先して維持し、境界付き最長mountと正確なremainderを実装。共通検証を状態変更前に行い、探索とNotFound経路も簡潔。要件・回帰テスト6件が成功。
+07,3,baseline,C,2,2,2,2,2,10,pass,False,True,False,False,,完全一致route優先、segment境界、最長一致、rootおよび子pathのremainderがすべて正しい。共通検証は非str・空・非/始まりを拒否し、登録前に実行される。テスト6件が成功。
+07,3,refinetale,E,2,2,2,2,2,10,pass,False,True,True,False,,完全一致routeを先に解決し、mountは境界付き候補から最長prefixを選ぶ。共通関数で登録・解決入力を検証し、正規化とremainderも要件どおり。要件・回帰テスト6件が成功。
+08,1,baseline,F,2,2,2,2,2,10,pass,False,True,False,False,,sourceの現在庫を取得して不足を事前判定し、成功時のみsource→destination順に既存adjustを呼ぶため原子性と監査順序を満たす。入力は副作用前に厳密検証されboolも拒否。自己移動は取得済み現在庫を返すだけで監査なし。全5テスト成功で既存adjustの回帰もない。
+08,1,refinetale,C,2,2,2,2,2,10,pass,False,True,False,False,,事前在庫確認とsource→destination順のadjust呼び出しにより正常移動を実装。不足時は一切のadjust前に例外となる。入力型・値を厳密検証しboolを拒否、自己移動は完全なno-op。destination側不変性などのテストも追加され、全5件が成功している。
+08,2,baseline,B,2,2,2,2,2,10,pass,False,True,False,False,,事前在庫確認後、sourceからdestinationの順に既存adjustを使用して戻り値を構成。不足時はadjust前にInsufficientStockとなり両状態不変。destination、非空strのsku、boolを除く正のintを副作用前に検証し、自己移動は監査なしで現在庫を返す。要件・既存テスト計5件が成功。
+08,2,refinetale,A,2,2,2,2,2,10,pass,False,True,True,False,,成功時はself.adjust(-quantity)の完了後にdestination.adjust(+quantity)を呼ぶ。source不足は最初のadjustが更新・監査追加前に送出するため双方不変。全入力を副作用前に厳密検証しboolも拒否、自己移動も検証後に在庫数を返すno-op。拡張テストを含む5件が成功し既存adjustも回帰なし。
+08,3,baseline,E,2,2,2,2,2,10,pass,False,True,False,False,,正常系はsource減算後にdestination加算を既存adjust経由で行う。不足は両adjustの前に検出され完全に原子的。destination、sku、quantityを事前検証しboolを拒否し、自己移動は無変更・無監査で現在庫を返す。要件各ケースと既存adjustを含む5テストが成功。
+08,3,refinetale,D,2,2,2,2,2,10,pass,False,True,True,False,,有効な移動は不足確認後にsource、destinationの順で既存adjustを呼び、両新在庫数を返す。不足・不正入力では副作用がなく、boolも明示的に拒否する。自己移動は監査を追加せず現在庫を返す。提示された要件テストと既存回帰テスト計5件はすべて成功。

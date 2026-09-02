@@ -1,0 +1,200 @@
+diff --git a/frontend/src/components/ui/star-rating.tsx b/frontend/src/components/ui/star-rating.tsx
+new file mode 100644
+index 0000000..a20ac96
+--- /dev/null
++++ b/frontend/src/components/ui/star-rating.tsx
+@@ -0,0 +1,194 @@
++import { StarIcon } from "lucide-react"
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++const DEFAULT_MAX_RATING = 5
++
++type StarRatingProps = Omit<
++  React.ComponentProps<"div">,
++  "defaultValue" | "onChange"
++> & {
++  value?: number
++  defaultValue?: number
++  onValueChange?: (value: number) => void
++  max?: number
++  name?: string
++  disabled?: boolean
++  readOnly?: boolean
++}
++
++function normalizeMaxRating(max: number | undefined) {
++  if (max === undefined || !Number.isFinite(max)) {
++    return DEFAULT_MAX_RATING
++  }
++
++  return Math.max(1, Math.floor(max))
++}
++
++function normalizeRating(value: number | undefined, max: number) {
++  if (value === undefined || !Number.isFinite(value)) {
++    return 0
++  }
++
++  return Math.min(max, Math.max(0, Math.round(value)))
++}
++
++function StarRating({
++  value,
++  defaultValue = 0,
++  onValueChange,
++  max,
++  name,
++  disabled = false,
++  readOnly = false,
++  className,
++  onKeyDown,
++  onMouseLeave,
++  "aria-label": ariaLabel,
++  "aria-labelledby": ariaLabelledBy,
++  ...props
++}: StarRatingProps) {
++  const maxRating = normalizeMaxRating(max)
++  const [uncontrolledValue, setUncontrolledValue] = React.useState(() =>
++    normalizeRating(defaultValue, maxRating)
++  )
++  const [hoveredValue, setHoveredValue] = React.useState<number | null>(null)
++  const buttonRefs = React.useRef<Array<HTMLButtonElement | null>>([])
++  const currentValue = normalizeRating(value ?? uncontrolledValue, maxRating)
++  const displayedValue = hoveredValue ?? currentValue
++  const ratingOptions = Array.from(
++    { length: maxRating },
++    (_, index) => index + 1
++  )
++  const accessibleLabel = ariaLabel ?? (ariaLabelledBy ? undefined : "Rating")
++
++  function updateValue(nextValue: number) {
++    if (disabled || readOnly) {
++      return
++    }
++
++    const normalizedValue = normalizeRating(nextValue, maxRating)
++
++    if (value === undefined) {
++      setUncontrolledValue(normalizedValue)
++    }
++
++    if (normalizedValue !== currentValue) {
++      onValueChange?.(normalizedValue)
++    }
++  }
++
++  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
++    onKeyDown?.(event)
++
++    if (event.defaultPrevented || disabled || readOnly) {
++      return
++    }
++
++    let nextValue: number | undefined
++
++    switch (event.key) {
++      case "ArrowLeft":
++      case "ArrowDown":
++        nextValue = Math.max(1, currentValue - 1)
++        break
++      case "ArrowRight":
++      case "ArrowUp":
++        nextValue = Math.min(maxRating, currentValue + 1)
++        break
++      case "Home":
++        nextValue = 1
++        break
++      case "End":
++        nextValue = maxRating
++        break
++      default:
++        return
++    }
++
++    event.preventDefault()
++    updateValue(nextValue)
++    buttonRefs.current[nextValue - 1]?.focus()
++  }
++
++  function handleMouseLeave(event: React.MouseEvent<HTMLDivElement>) {
++    setHoveredValue(null)
++    onMouseLeave?.(event)
++  }
++
++  return (
++    <div
++      role="radiogroup"
++      data-slot="star-rating"
++      data-disabled={disabled || undefined}
++      data-readonly={readOnly || undefined}
++      aria-label={accessibleLabel}
++      aria-labelledby={ariaLabelledBy}
++      aria-disabled={disabled || undefined}
++      aria-readonly={readOnly || undefined}
++      className={cn(
++        "inline-flex items-center gap-1 rounded-md aria-invalid:ring-destructive/20 aria-invalid:ring-[3px]",
++        className
++      )}
++      onKeyDown={handleKeyDown}
++      onMouseLeave={handleMouseLeave}
++      {...props}
++    >
++      {name ? (
++        <input
++          type="hidden"
++          data-slot="star-rating-input"
++          name={name}
++          value={currentValue}
++          disabled={disabled}
++          readOnly
++        />
++      ) : null}
++
++      {ratingOptions.map((rating) => {
++        const isActive = rating <= displayedValue
++        const isSelected = rating === currentValue
++        const isTabStop = isSelected || (currentValue === 0 && rating === 1)
++
++        return (
++          <button
++            key={rating}
++            ref={(element) => {
++              buttonRefs.current[rating - 1] = element
++            }}
++            type="button"
++            role="radio"
++            data-slot="star-rating-item"
++            data-state={isActive ? "on" : "off"}
++            aria-label={`${rating} of ${maxRating} stars`}
++            aria-checked={isSelected}
++            aria-readonly={readOnly || undefined}
++            disabled={disabled}
++            tabIndex={disabled ? -1 : isTabStop ? 0 : -1}
++            className={cn(
++              "text-muted-foreground rounded-sm outline-none transition-colors focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
++              isActive && "text-primary"
++            )}
++            onClick={() => updateValue(rating)}
++            onMouseEnter={() => {
++              if (!disabled && !readOnly) {
++                setHoveredValue(rating)
++              }
++            }}
++          >
++            <StarIcon
++              aria-hidden="true"
++              className={cn(
++                "size-6 transition-colors",
++                isActive ? "fill-current" : "fill-transparent"
++              )}
++            />
++          </button>
++        )
++      })}
++    </div>
++  )
++}
++
++export { StarRating, type StarRatingProps }

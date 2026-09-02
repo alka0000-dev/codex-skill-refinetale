@@ -1,0 +1,16 @@
+{
+  "fixture": "05",
+  "fixture_name": "05-prepared-publish",
+  "mode": "baseline",
+  "run": 2,
+  "prompt": "# 請求書の一括公開\n\n`workspace/` の請求書サービスに、一括公開を追加してください。\n\n要件:\n\n- `InvoiceService.publish_all(invoices)` を追加し、公開結果を入力順のlistで返す。\n- 各invoiceは既存の `render` で生成し、既存publisherの `publish(invoice_id, body)` で公開する。\n- 全invoiceのrenderが成功した後にだけ、最初のpublishを行う。\n- render失敗時は例外をそのまま送出し、1件もpublishしない。\n- publish失敗時は例外をそのまま送出し、後続invoiceをpublishしない（既に成功した外部公開は取り消さない）。\n- 空入力は空listを返し、publisherを呼ばない。\n- 既存の `publish_one` の契約を維持する。\n\n`workspace/` の実装を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "034d9e752c101b6b2d359651a167f33d5d7e80330a3c5449a5c685a38eca3ce5",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:43:16.806704+00:00",
+  "finished_at": "2026-09-02T05:44:36.752402+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "947f83bc82ee457455883ee03c0e69b83adde40ee6dbd0c089c729c262d4d1b7"
+}

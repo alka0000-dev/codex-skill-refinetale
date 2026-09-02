@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx に、制御・非制御値、1〜max の選択、hover表示、キーボード操作、disabled/readOnly、フォーム送信用hidden inputを備えた実用的な入力コンポーネントが追加されている。currentValueを選択状態の基準として一貫して使用しており、ビルドも成功している。"
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx でネイティブradio群として実装され、制御・非制御値、max、disabled、required、name、hover/focusプレビューを提供している。selectedValueからcheckedと表示を導く単一の経路で、変更範囲もコンポーネント追加に限定されている。"
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx に5段階の制御コンポーネントが追加され、fieldsetとネイティブradioにより選択、フォーム連携、required、disabled継承、キーボード操作を実現している。valueがchecked状態と星の塗り表示の共通ソースになっている。"
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx は既存依存のRadix RadioGroupを利用し、制御・非制御値、max、disabled、hoverプレビュー、アクセシブルな各評価項目を実装している。selectedValueとdisplayedValueの役割が明確で、追加スコープもチケット内に収まっている。"
+    },
+    {
+      "id": "E",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx にRadix RadioGroupベースの5段階制御入力が追加されている。valueを選択状態と塗り表示の唯一の基準にし、onValueChangeで数値を返す明快な構成で、disabled等のRoot propsも既存プリミティブ経由で利用できる。"
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "frontend/src/components/ui/star-rating.tsx にRadix RadioGroupを使った5段階の制御型評価入力が実装されている。呼び出し側指定可能なaria-label、選択コールバック、disabledを含むRoot propsを備え、valueから選択と表示を一貫して導出している。"
+    }
+  ]
+}

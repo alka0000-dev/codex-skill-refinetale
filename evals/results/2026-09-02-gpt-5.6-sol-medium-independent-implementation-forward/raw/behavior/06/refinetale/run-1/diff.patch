@@ -1,0 +1,57 @@
+diff --git a/event_bus.py b/event_bus.py
+index a93e1e6..3a4933c 100644
+--- a/event_bus.py
++++ b/event_bus.py
+@@ -6,8 +6,19 @@ class EventBus:
+         self._handlers.setdefault(event, []).append(handler)
+         return handler
+ 
++    def off(self, event, handler):
++        handlers = self._handlers.get(event)
++        if handlers is None:
++            return False
++
++        try:
++            handlers.remove(handler)
++        except ValueError:
++            return False
++        return True
++
+     def emit(self, event, payload):
+         results = []
+-        for handler in self._handlers.get(event, []):
++        for handler in list(self._handlers.get(event, [])):
+             results.append(handler(payload))
+         return results
+diff --git a/tests/test_existing.py b/tests/test_existing.py
+index f0a2fb7..338629f 100644
+--- a/tests/test_existing.py
++++ b/tests/test_existing.py
+@@ -5,7 +5,8 @@ from event_bus import EventBus
+ class ExistingTests(unittest.TestCase):
+     def test_emit_in_registration_order(self):
+         bus = EventBus()
+-        bus.on("ready", lambda value: "a" + value)
++        first = lambda value: "a" + value
++        self.assertIs(bus.on("ready", first), first)
+         bus.on("ready", lambda value: "b" + value)
+         self.assertEqual(bus.emit("ready", "!"), ["a!", "b!"])
+         self.assertEqual(bus.emit("other", "!"), [])
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 640171d..f0b9fd9 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -50,6 +50,13 @@ class RequirementTests(unittest.TestCase):
+         self.assertFalse(bus.off("missing", lambda value: value))
+         self.assertNotIn("missing", bus._handlers)
+ 
++    def test_unregistered_handler_is_not_removed(self):
++        bus = EventBus()
++        registered = lambda value: value
++        bus.on("x", registered)
++        self.assertFalse(bus.off("x", lambda value: value))
++        self.assertEqual(bus.emit("x", 3), [3])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

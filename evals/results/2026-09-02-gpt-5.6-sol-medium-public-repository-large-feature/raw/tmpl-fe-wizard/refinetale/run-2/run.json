@@ -1,0 +1,25 @@
+{
+  "task_id": "tmpl-fe-wizard",
+  "mode": "refinetale",
+  "run": 2,
+  "ticket": "Add a multi-step form wizard component to the frontend.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T09:52:03.554934+00:00",
+  "finished_at": "2026-09-02T10:00:22.406461+00:00",
+  "returncode": 0,
+  "timed_out": false,
+  "build_passed": true,
+  "prompt_sha256": "4ee3e72812973c6e13276037d5211e25f866f9d1b61b8a1e8bc7c5759da30e63",
+  "diff_sha256": "79b8f11f0891e8278adf630bcb555d6065d95bbeecc4c64737563af342b048f5",
+  "skill_trace": true,
+  "global_refinetale_trace": false,
+  "referytale_trace": false,
+  "usage": {
+    "input_tokens": 965125,
+    "cached_input_tokens": 903168,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 14694,
+    "reasoning_output_tokens": 7673
+  }
+}

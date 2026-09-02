@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "05",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "$refinetale\n\n次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "9ca183c5e496b1a872d0cf7b4dbbdf21b516ac23b31633b7cd7ec78b509c8a7c",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:43:08.241501+00:00",
+  "finished_at": "2026-09-02T02:43:35.017789+00:00",
+  "returncode": 0
+}

@@ -1,0 +1,290 @@
+[
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "$refinetale\n\n次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "$refinetale\n\n次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "$refinetale\n\n次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "$refinetale\n\n次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "routing",
+    "fixture": "A",
+    "mode": "invoke",
+    "run": 1,
+    "prompt": "Reactの選択UIで、配列の `selectedIds` とAPI送信用文字列の `selectedIdsForRequest` を別々にstate管理しています。全選択機能を追加したいので、既存契約を維持しながら状態の重複を整理し、変更方針とテスト観点を出してください。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "routing",
+    "fixture": "B",
+    "mode": "do-not-invoke",
+    "run": 1,
+    "prompt": "初心者向けに、feature flagとは何かを3文で説明してください。コード変更や設計レビューは不要です。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "$refinetale\n\n次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "routing",
+    "fixture": "A",
+    "mode": "invoke",
+    "run": 3,
+    "prompt": "Reactの選択UIで、配列の `selectedIds` とAPI送信用文字列の `selectedIdsForRequest` を別々にstate管理しています。全選択機能を追加したいので、既存契約を維持しながら状態の重複を整理し、変更方針とテスト観点を出してください。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "routing",
+    "fixture": "B",
+    "mode": "do-not-invoke",
+    "run": 3,
+    "prompt": "初心者向けに、feature flagとは何かを3文で説明してください。コード変更や設計レビューは不要です。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "02",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "$refinetale\n\n次のReact hookに「表示中の項目をすべて選択する」機能を追加してください。APIには引き続きカンマ区切り文字列を送信します。選択状態がずれないようにし、必要なテストを追加してください。\n\n```tsx\nfunction useSelection() {\n  const [selectedIds, setSelectedIds] = useState<string[]>([]);\n  const [selectedIdsForRequest, setSelectedIdsForRequest] = useState(\"\");\n\n  const toggle = (id: string) => {\n    const next = selectedIds.includes(id)\n      ? selectedIds.filter((value) => value !== id)\n      : [...selectedIds, id];\n    setSelectedIds(next);\n    setSelectedIdsForRequest(next.join(\",\"));\n  };\n\n  const submit = () => api.search({ selectedIds: selectedIdsForRequest });\n\n  return { selectedIds, toggle, submit };\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "routing",
+    "fixture": "B",
+    "mode": "do-not-invoke",
+    "run": 2,
+    "prompt": "初心者向けに、feature flagとは何かを3文で説明してください。コード変更や設計レビューは不要です。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "$refinetale\n\n次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "$refinetale\n\n次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "refinetale",
+    "run": 2,
+    "prompt": "$refinetale\n\n次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "baseline",
+    "run": 2,
+    "prompt": "次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "routing",
+    "fixture": "A",
+    "mode": "invoke",
+    "run": 2,
+    "prompt": "Reactの選択UIで、配列の `selectedIds` とAPI送信用文字列の `selectedIdsForRequest` を別々にstate管理しています。全選択機能を追加したいので、既存契約を維持しながら状態の重複を整理し、変更方針とテスト観点を出してください。",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "$refinetale\n\n次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "baseline",
+    "run": 1,
+    "prompt": "次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "05",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "$refinetale\n\n次のコードを、将来 `archived` が追加されるかもしれない点を考慮してリファクタリングしてください。ただし現在の仕様は、下書きだけが編集可能で、公開済みは編集不可です。現在必要な変更だけを行ってください。\n\n```ts\ntype ArticleStatus = \"draft\" | \"published\";\n\nexport function canEdit(status: ArticleStatus): boolean {\n  return status === \"draft\";\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "baseline",
+    "run": 3,
+    "prompt": "次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/baseline"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "$refinetale\n\n次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "01",
+    "mode": "refinetale",
+    "run": 1,
+    "prompt": "$refinetale\n\n次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "04",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "$refinetale\n\n次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  },
+  {
+    "category": "behavior",
+    "fixture": "03",
+    "mode": "refinetale",
+    "run": 3,
+    "prompt": "$refinetale\n\n次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+    "workspace": "<EVAL_WORKSPACE_ROOT>/treatment"
+  }
+]

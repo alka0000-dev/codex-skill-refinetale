@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "star": true,
+    "change": true
+  },
+  "all_present": true
+}

@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a06039-bb57-7b90-a71c-84f38ecdc850"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Feature flag（機能フラグ）とは、プログラムを変更せずに機能のオン・オフを切り替える仕組みです。  \n新機能を一部の利用者だけに試したり、問題が起きた機能をすぐ停止したりできます。  \n照明のスイッチのように、公開する機能を状況に応じて制御できるものです。"}}
+{"type":"turn.completed","usage":{"input_tokens":18810,"cached_input_tokens":9984,"cache_write_input_tokens":0,"output_tokens":153,"reasoning_output_tokens":51}}

@@ -1,0 +1,30 @@
+diff --git a/frontend/src/components/ui/color-picker.tsx b/frontend/src/components/ui/color-picker.tsx
+new file mode 100644
+index 0000000..5944d52
+--- /dev/null
++++ b/frontend/src/components/ui/color-picker.tsx
+@@ -0,0 +1,24 @@
++import type * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++type ColorPickerProps = Omit<React.ComponentProps<"input">, "type">
++
++function ColorPicker({ className, ...props }: ColorPickerProps) {
++  return (
++    <input
++      type="color"
++      data-slot="color-picker"
++      className={cn(
++        "border-input bg-background h-9 w-14 cursor-pointer rounded-md border p-1 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
++        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
++        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
++        "[&::-moz-color-swatch]:rounded-sm [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-sm [&::-webkit-color-swatch]:border-0",
++        className,
++      )}
++      {...props}
++    />
++  )
++}
++
++export { ColorPicker, type ColorPickerProps }

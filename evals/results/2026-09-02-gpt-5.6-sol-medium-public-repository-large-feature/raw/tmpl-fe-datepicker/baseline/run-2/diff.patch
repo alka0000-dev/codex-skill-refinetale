@@ -1,0 +1,29 @@
+diff --git a/frontend/src/components/ui/date-picker.tsx b/frontend/src/components/ui/date-picker.tsx
+new file mode 100644
+index 0000000..88fe83e
+--- /dev/null
++++ b/frontend/src/components/ui/date-picker.tsx
+@@ -0,0 +1,23 @@
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++import { Input } from "@/components/ui/input"
++
++type DatePickerProps = Omit<React.ComponentProps<"input">, "type">
++
++function DatePicker({ className, ...props }: DatePickerProps) {
++  return (
++    <Input
++      type="date"
++      data-slot="date-picker"
++      className={cn(
++        "[color-scheme:light] dark:[color-scheme:dark]",
++        className,
++      )}
++      {...props}
++    />
++  )
++}
++
++export { DatePicker }
++export type { DatePickerProps }

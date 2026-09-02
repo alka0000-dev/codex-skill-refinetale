@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "step-state": true,
+    "navigation": true
+  },
+  "all_present": true
+}

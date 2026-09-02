@@ -1,0 +1,348 @@
+{
+  "baseline": {
+    "runs": 18,
+    "agent_completed_runs": 18,
+    "build_passed_runs": 18,
+    "correctness_gate_runs": 18,
+    "feature_signal_runs": 16,
+    "critical_failures": 0,
+    "source_added_loc_all": {
+      "sum": 4118,
+      "mean": 228.778,
+      "median": 261.0
+    },
+    "source_added_loc_gate_passed": {
+      "sum": 4118,
+      "mean": 228.778,
+      "median": 261.0
+    },
+    "source_files_gate_passed": {
+      "mean": 1.444,
+      "median": 1.0
+    },
+    "dependency_manifest_changed_runs": 0,
+    "test_written_runs": 0,
+    "judge_points": 189,
+    "available_judge_points": 216,
+    "criterion_points": {
+      "completeness": 54,
+      "coherence": 42,
+      "scope_discipline": 43,
+      "single_path": 50
+    },
+    "skill_trace_runs": 0,
+    "global_refinetale_trace_runs": 0,
+    "referytale_trace_runs": 0,
+    "duration_seconds": {
+      "mean": 345.579,
+      "median": 355.971
+    },
+    "output_tokens": {
+      "sum": 178453,
+      "mean": 9914.056
+    },
+    "per_task": {
+      "tmpl-fe-colorpicker": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          24,
+          24,
+          26
+        ],
+        "source_added_loc_gate_passed_median": 24,
+        "judge_points": 33
+      },
+      "tmpl-fe-command": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          260,
+          263,
+          297
+        ],
+        "source_added_loc_gate_passed_median": 263,
+        "judge_points": 30
+      },
+      "tmpl-fe-datepicker": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          480,
+          23,
+          11
+        ],
+        "source_added_loc_gate_passed_median": 23,
+        "judge_points": 31
+      },
+      "tmpl-fe-dropzone": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          277,
+          266,
+          262
+        ],
+        "source_added_loc_gate_passed_median": 266,
+        "judge_points": 27
+      },
+      "tmpl-fe-rating": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          98,
+          124,
+          194
+        ],
+        "source_added_loc_gate_passed_median": 124,
+        "judge_points": 36
+      },
+      "tmpl-fe-wizard": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          526,
+          492,
+          471
+        ],
+        "source_added_loc_gate_passed_median": 492,
+        "judge_points": 32
+      }
+    }
+  },
+  "refinetale": {
+    "runs": 18,
+    "agent_completed_runs": 18,
+    "build_passed_runs": 18,
+    "correctness_gate_runs": 18,
+    "feature_signal_runs": 16,
+    "critical_failures": 0,
+    "source_added_loc_all": {
+      "sum": 1777,
+      "mean": 98.722,
+      "median": 82.0
+    },
+    "source_added_loc_gate_passed": {
+      "sum": 1777,
+      "mean": 98.722,
+      "median": 82.0
+    },
+    "source_files_gate_passed": {
+      "mean": 1.722,
+      "median": 1.0
+    },
+    "dependency_manifest_changed_runs": 0,
+    "test_written_runs": 0,
+    "judge_points": 213,
+    "available_judge_points": 216,
+    "criterion_points": {
+      "completeness": 53,
+      "coherence": 52,
+      "scope_discipline": 54,
+      "single_path": 54
+    },
+    "skill_trace_runs": 18,
+    "global_refinetale_trace_runs": 0,
+    "referytale_trace_runs": 0,
+    "duration_seconds": {
+      "mean": 438.436,
+      "median": 437.533
+    },
+    "output_tokens": {
+      "sum": 233910,
+      "mean": 12995
+    },
+    "per_task": {
+      "tmpl-fe-colorpicker": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          23,
+          25,
+          23
+        ],
+        "source_added_loc_gate_passed_median": 23,
+        "judge_points": 35
+      },
+      "tmpl-fe-command": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          246,
+          192,
+          178
+        ],
+        "source_added_loc_gate_passed_median": 192,
+        "judge_points": 35
+      },
+      "tmpl-fe-datepicker": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          12,
+          11,
+          9
+        ],
+        "source_added_loc_gate_passed_median": 11,
+        "judge_points": 36
+      },
+      "tmpl-fe-dropzone": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          106,
+          94,
+          136
+        ],
+        "source_added_loc_gate_passed_median": 106,
+        "judge_points": 36
+      },
+      "tmpl-fe-rating": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          55,
+          57,
+          70
+        ],
+        "source_added_loc_gate_passed_median": 57,
+        "judge_points": 36
+      },
+      "tmpl-fe-wizard": {
+        "runs": 3,
+        "build_passed_runs": 3,
+        "correctness_gate_runs": 3,
+        "source_added_loc_all": [
+          284,
+          137,
+          119
+        ],
+        "source_added_loc_gate_passed_median": 137,
+        "judge_points": 35
+      }
+    }
+  },
+  "comparison": {
+    "per_task": {
+      "tmpl-fe-colorpicker": {
+        "baseline_gate_passed_loc": [
+          24,
+          24,
+          26
+        ],
+        "refinetale_gate_passed_loc": [
+          23,
+          25,
+          23
+        ],
+        "baseline_median": 24,
+        "refinetale_median": 23,
+        "median_reduction": 0.0417
+      },
+      "tmpl-fe-command": {
+        "baseline_gate_passed_loc": [
+          260,
+          263,
+          297
+        ],
+        "refinetale_gate_passed_loc": [
+          246,
+          192,
+          178
+        ],
+        "baseline_median": 263,
+        "refinetale_median": 192,
+        "median_reduction": 0.27
+      },
+      "tmpl-fe-datepicker": {
+        "baseline_gate_passed_loc": [
+          480,
+          23,
+          11
+        ],
+        "refinetale_gate_passed_loc": [
+          12,
+          11,
+          9
+        ],
+        "baseline_median": 23,
+        "refinetale_median": 11,
+        "median_reduction": 0.5217
+      },
+      "tmpl-fe-dropzone": {
+        "baseline_gate_passed_loc": [
+          277,
+          266,
+          262
+        ],
+        "refinetale_gate_passed_loc": [
+          106,
+          94,
+          136
+        ],
+        "baseline_median": 266,
+        "refinetale_median": 106,
+        "median_reduction": 0.6015
+      },
+      "tmpl-fe-rating": {
+        "baseline_gate_passed_loc": [
+          98,
+          124,
+          194
+        ],
+        "refinetale_gate_passed_loc": [
+          55,
+          57,
+          70
+        ],
+        "baseline_median": 124,
+        "refinetale_median": 57,
+        "median_reduction": 0.5403
+      },
+      "tmpl-fe-wizard": {
+        "baseline_gate_passed_loc": [
+          526,
+          492,
+          471
+        ],
+        "refinetale_gate_passed_loc": [
+          284,
+          137,
+          119
+        ],
+        "baseline_median": 492,
+        "refinetale_median": 137,
+        "median_reduction": 0.7215
+      }
+    },
+    "task_balanced_mean_of_median_reductions": 0.449,
+    "pooled_gate_passed_loc_reduction": 0.5685,
+    "correctness_gate_rate_difference": 0.0,
+    "correctness_gate_fisher_exact_two_sided_p": 1.0,
+    "baseline_correctness_gate_wilson_95": [
+      0.8241,
+      1.0
+    ],
+    "refinetale_correctness_gate_wilson_95": [
+      0.8241,
+      1.0
+    ]
+  },
+  "judge_agreement": {
+    "exact_score_vector_runs": 18,
+    "critical_match_runs": 36,
+    "runs": 36,
+    "manual_adjustments": 0
+  }
+}

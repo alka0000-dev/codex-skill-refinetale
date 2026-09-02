@@ -1,0 +1,65 @@
+diff --git a/ledger.py b/ledger.py
+index cf73458..91fc053 100644
+--- a/ledger.py
++++ b/ledger.py
+@@ -14,3 +14,25 @@ class Ledger:
+         self.balances[account] = balance
+         self.audit.append((account, delta, balance))
+         return balance
++
++    def apply_batch(self, entries):
++        validated_entries = []
++        balances = dict(self.balances)
++
++        for entry in entries:
++            if not isinstance(entry, tuple) or len(entry) != 2:
++                raise ValueError("each entry must be an (account, delta) tuple")
++
++            account, delta = entry
++            if not isinstance(account, str) or not account:
++                raise ValueError("account must be a non-empty string")
++            if isinstance(delta, bool) or not isinstance(delta, int):
++                raise ValueError("delta must be an integer")
++
++            balance = balances.get(account, 0) + delta
++            if balance < 0:
++                raise Overdraft(account)
++            balances[account] = balance
++            validated_entries.append(entry)
++
++        return [self.apply(account, delta) for account, delta in validated_entries]
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 37180c5..d2abb2b 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -8,6 +8,20 @@ class RequirementTests(unittest.TestCase):
+         self.assertEqual(ledger.apply_batch((("a", -2), ("a", 4))), [3, 7])
+         self.assertEqual(ledger.audit, [("a", -2, 3), ("a", 4, 7)])
+ 
++    def test_success_uses_apply_for_each_entry(self):
++        class RecordingLedger(Ledger):
++            def __init__(self):
++                super().__init__()
++                self.applied = []
++
++            def apply(self, account, delta):
++                self.applied.append((account, delta))
++                return super().apply(account, delta)
++
++        ledger = RecordingLedger()
++        self.assertEqual(ledger.apply_batch((("a", 1), ("b", 2))), [1, 2])
++        self.assertEqual(ledger.applied, [("a", 1), ("b", 2)])
++
+     def test_intermediate_overdraft_is_atomic(self):
+         ledger = Ledger({"a": 2})
+         before_balances = dict(ledger.balances)
+@@ -20,7 +34,9 @@ class RequirementTests(unittest.TestCase):
+     def test_invalid_entry_is_atomic(self):
+         invalid_batches = [
+             [("a", 1), ("", 2)],
++            [("a", 1), (1, 2)],
+             [("a", 1), ("b", True)],
++            [("a", 1), ("b", 1.5)],
+             [("a", 1), ["b", 2]],
+             [("a", 1), ("b", 2, 3)],
+         ]

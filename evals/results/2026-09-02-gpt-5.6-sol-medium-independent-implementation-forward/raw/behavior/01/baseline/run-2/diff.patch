@@ -1,0 +1,37 @@
+diff --git a/client.py b/client.py
+index 3528ffe..93a7756 100644
+--- a/client.py
++++ b/client.py
+@@ -1,6 +1,29 @@
++import math
++
++
+ class Client:
+-    def __init__(self, transport):
++    DEFAULT_TIMEOUT = 5.0
++
++    def __init__(self, transport, timeout=None):
+         self._transport = transport
++        self._timeout = (
++            self.DEFAULT_TIMEOUT if timeout is None else self._validate_timeout(timeout)
++        )
++
++    def request(self, path, timeout=None):
++        resolved_timeout = (
++            self._timeout if timeout is None else self._validate_timeout(timeout)
++        )
++        return self._transport.send(path, timeout=resolved_timeout)
+ 
+-    def request(self, path):
+-        return self._transport.send(path)
++    @staticmethod
++    def _validate_timeout(timeout):
++        is_positive_int = (
++            isinstance(timeout, int) and not isinstance(timeout, bool) and timeout > 0
++        )
++        is_positive_finite_float = (
++            isinstance(timeout, float) and math.isfinite(timeout) and timeout > 0
++        )
++        if not (is_positive_int or is_positive_finite_float):
++            raise ValueError("timeout must be a positive finite int or float")
++        return timeout

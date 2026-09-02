@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "01",
+  "mode": "refinetale",
+  "run": 3,
+  "prompt": "$refinetale\n\n次のTypeScriptコードをリファクタリングしてください。`ApiRange` と `CsvRange` は外部契約なので、フィールド名を変更してはいけません。無効な日付と開始日が終了日より後の範囲は、これまでどおり拒否してください。必要なテストも更新してください。\n\n```ts\ntype ApiRange = { from: string; to: string };\ntype CsvRange = { startDate: string; endDate: string };\n\nexport function createApiBuckets(input: ApiRange) {\n  const start = new Date(input.from);\n  const end = new Date(input.to);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n\nexport function createCsvBuckets(input: CsvRange) {\n  const start = new Date(input.startDate);\n  const end = new Date(input.endDate);\n  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {\n    throw new Error(\"invalid date\");\n  }\n  if (start > end) throw new Error(\"invalid range\");\n  return createBuckets(start, end);\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "2a8b3872871fc0603d2031ac3b92409cac2338ee56b73a952dd6a932bf74e013",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:46:10.867491+00:00",
+  "finished_at": "2026-09-02T02:47:22.338318+00:00",
+  "returncode": 0
+}

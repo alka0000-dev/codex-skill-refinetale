@@ -1,0 +1,25 @@
+{
+  "task_id": "tmpl-fe-command",
+  "mode": "baseline",
+  "run": 1,
+  "ticket": "Add a command palette (searchable command menu) to the frontend.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T09:26:46.012989+00:00",
+  "finished_at": "2026-09-02T09:33:17.619848+00:00",
+  "returncode": 0,
+  "timed_out": false,
+  "build_passed": true,
+  "prompt_sha256": "6c2e395c5e0a460da9fe2960d273bd67e165286365cda1ca08994005c9075f30",
+  "diff_sha256": "43e8df3095dee768ea31b24b3bb8497acc59d2208db199801da996f424eb9b22",
+  "skill_trace": false,
+  "global_refinetale_trace": false,
+  "referytale_trace": false,
+  "usage": {
+    "input_tokens": 864795,
+    "cached_input_tokens": 820992,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 11130,
+    "reasoning_output_tokens": 3617
+  }
+}

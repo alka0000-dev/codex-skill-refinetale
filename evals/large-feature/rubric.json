@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "instructions": "You are a senior engineer evaluating implementations of one feature ticket in an existing React and TypeScript repository. Evaluate each anonymized candidate independently. Judge the code diff, not prose length. Do not reward fewer lines when core behavior is missing, and do not penalize tests merely for existing. Treat the reported build result as evidence. Return every candidate exactly once.",
+  "criteria": {
+    "completeness": {
+      "0": "No meaningful implementation or a placeholder.",
+      "1": "The core requested behavior is missing or broken.",
+      "2": "The main requested behavior is implemented; minor omissions may remain.",
+      "3": "The ticket is fully implemented as stated. Do not invent unstated product requirements."
+    },
+    "coherence": {
+      "0": "The change conflicts with the repository design or is not usable.",
+      "1": "Large avoidable layers, dependencies, or parallel mechanisms dominate the change.",
+      "2": "The change is coherent but contains a small avoidable layer or custom mechanism.",
+      "3": "The change uses existing repository or native platform mechanisms and stays in the smallest owning responsibility."
+    },
+    "scope_discipline": {
+      "0": "Most of the change is unrelated to the ticket.",
+      "1": "The change includes substantial speculative features, APIs, configuration, or demos.",
+      "2": "The ticket is central but a small amount of unnecessary scope remains.",
+      "3": "The change is limited to what the ticket requires."
+    },
+    "single_path": {
+      "0": "Duplicated state, values, branches, or data paths dominate the implementation.",
+      "1": "There is substantial avoidable duplication or competing sources of truth.",
+      "2": "The main path is coherent with only minor avoidable duplication.",
+      "3": "State, values, and behavior have one clear source of truth and one coherent path."
+    }
+  },
+  "critical_failure": "Set true only for a missing ticket implementation, removal of an important existing contract, a repository-breaking change, or an attempt to hide a failed build. A build failure itself is handled separately by the deterministic correctness gate.",
+  "correctness_gate": "Codex completed, frontend build passed, completeness is at least 2, and critical_failure is false."
+}

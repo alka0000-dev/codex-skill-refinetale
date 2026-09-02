@@ -1,0 +1,170 @@
+{
+  "baseline": {
+    "runs": 24,
+    "passed_runs": 24,
+    "borderline_runs": 0,
+    "failed_runs": 0,
+    "critical_failures": 0,
+    "verification_passed_runs": 24,
+    "earned_points": 237,
+    "available_points": 240,
+    "score_rate": 0.9875,
+    "pass_rate": 1.0,
+    "verification_pass_rate": 1.0,
+    "skill_trace_runs": 0,
+    "criterion_points": {
+      "S1": 48,
+      "S2": 47,
+      "S3": 46,
+      "S4": 48,
+      "S5": 48
+    },
+    "per_fixture": {
+      "01": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 29,
+        "available_points": 30
+      },
+      "02": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "03": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "04": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 28,
+        "available_points": 30
+      },
+      "05": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "06": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "07": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "08": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      }
+    }
+  },
+  "refinetale": {
+    "runs": 24,
+    "passed_runs": 24,
+    "borderline_runs": 0,
+    "failed_runs": 0,
+    "critical_failures": 0,
+    "verification_passed_runs": 24,
+    "earned_points": 238,
+    "available_points": 240,
+    "score_rate": 0.9917,
+    "pass_rate": 1.0,
+    "verification_pass_rate": 1.0,
+    "skill_trace_runs": 22,
+    "criterion_points": {
+      "S1": 48,
+      "S2": 47,
+      "S3": 48,
+      "S4": 47,
+      "S5": 48
+    },
+    "per_fixture": {
+      "01": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 29,
+        "available_points": 30
+      },
+      "02": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "03": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "04": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 29,
+        "available_points": 30
+      },
+      "05": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "06": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "07": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      },
+      "08": {
+        "passed_runs": 3,
+        "verification_passed_runs": 3,
+        "points": 30,
+        "available_points": 30
+      }
+    }
+  },
+  "difference": {
+    "pass_rate": 0.0,
+    "score_rate": 0.0042,
+    "verification_pass_rate": 0.0,
+    "critical_failures": 0
+  },
+  "inference": {
+    "baseline_pass_rate_wilson_95": [
+      0.862,
+      1.0
+    ],
+    "refinetale_pass_rate_wilson_95": [
+      0.862,
+      1.0
+    ],
+    "pass_rate_fisher_exact_two_sided_p": 1.0,
+    "baseline_verification_rate_wilson_95": [
+      0.862,
+      1.0
+    ],
+    "refinetale_verification_rate_wilson_95": [
+      0.862,
+      1.0
+    ],
+    "verification_rate_fisher_exact_two_sided_p": 1.0
+  }
+}

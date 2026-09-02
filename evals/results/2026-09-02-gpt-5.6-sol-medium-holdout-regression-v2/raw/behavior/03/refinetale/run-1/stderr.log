@@ -1,0 +1,11 @@
+Reading additional input from stdin...
+2026-09-02T05:15:03.529440Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:15:03.529743Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:15:03.579681Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:15:03.591527Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:15:03.633143Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at "<USER_HOME>/.codex/shell_snapshots/01a0608a-72d6-7612-a07a-935978910481.1788326081365492000.sh": Os { code: 2, kind: NotFound, message: "No such file or directory" }
+2026-09-02T05:15:03.755399Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:15:03.755474Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:16:00.301868Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 204ms)... turn_id=01a0608a-cd01-7232-b76d-ff4bcf15c8db retries=1 max_retries=5 sampling_error=stream disconnected before completion: IO error: Operation timed out (os error 60)
+2026-09-02T05:17:39.891607Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T05:17:39.927356Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a0608a-c9a7-7212-87e4-cb6ad89ba2cf.1788326103546726000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

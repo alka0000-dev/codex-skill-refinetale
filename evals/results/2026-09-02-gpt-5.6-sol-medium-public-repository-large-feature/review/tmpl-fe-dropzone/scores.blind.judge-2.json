@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`FileUploadDropzone.tsx` implements click selection, drag-and-drop, accept/size validation, deduplication, removal, disabled state, and change callbacks; the passing frontend build supports usability. Adding a hard-coded upload card to `routes/_layout/index.tsx` and default product restrictions goes slightly beyond merely adding the component."
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`components/ui/file-dropzone.tsx` is a focused reusable component with native file input browsing, drop handling, multiple-file behavior, disabled handling, drag feedback, and a single `onFilesSelected` output path. It uses existing `cn`, React, and platform mechanisms without unrelated changes."
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`file-upload-dropzone.tsx` fully supports browsing, dropping, validation, maximum counts and sizes, selected-file display/removal, and controlled or uncontrolled use. `files = value ?? internalFiles` and `updateFiles` form a coherent standard React state path, though the clear/list UI and extensive configuration exceed the minimal ticket."
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`FileUploadDropzone.tsx` implements drag and click selection, validation, deduplication, removal, feedback, and callback propagation, and is rendered on the dashboard. Embedding a hard-coded Card, title, description, footer, and selection presentation inside a Common component reduces composability and adds presentation scope beyond the dropzone itself."
+    },
+    {
+      "id": "E",
+      "completeness": 2,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`file-dropzone.tsx` provides the requested native-input and drag-and-drop selection paths with disabled and multiple behavior in a small reusable component. Unlike B and F, `handleChange` does not clear the input value, so choosing the same file again may not emit another change; drag-leave handling is also less robust when crossing child elements."
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`file-upload-dropzone.tsx` provides click browsing, drag-and-drop, disabled and multiple modes, accept filtering for dropped files, input reset, focus styling, and one `onFilesSelected` callback path. The implementation is confined to the new reusable UI component and the frontend build passed."
+    }
+  ]
+}

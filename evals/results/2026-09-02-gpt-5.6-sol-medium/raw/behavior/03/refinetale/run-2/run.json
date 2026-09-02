@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "03",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "$refinetale\n\n次の通知処理にpush通知を追加してください。email、sms、pushは同じ入力検証、本文生成、監査記録を使います。異なるのは送信clientと宛先フィールドだけです。現在要求されていない将来チャネルの仕組みは追加しないでください。\n\n```ts\nasync function sendEmail(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await emailClient.send({ to: input.email, body });\n  await audit.record(\"email.sent\", input.userId);\n}\n\nasync function sendSms(input: NotificationInput) {\n  validate(input);\n  const body = renderBody(input.template, input.values);\n  await smsClient.send({ to: input.phoneNumber, body });\n  await audit.record(\"sms.sent\", input.userId);\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "9b5593d47a15e065f311550a9798fdb3200bd053641359248cd6d37a11d58c4b",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T02:43:38.783120+00:00",
+  "finished_at": "2026-09-02T02:45:02.155177+00:00",
+  "returncode": 0
+}

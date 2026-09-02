@@ -1,0 +1,83 @@
+diff --git a/router.py b/router.py
+index 3bd4224..eadd289 100644
+--- a/router.py
++++ b/router.py
+@@ -5,12 +5,36 @@ class NotFound(Exception):
+ class Router:
+     def __init__(self):
+         self._routes = {}
++        self._mounts = {}
+ 
+     def add(self, path, handler):
+         self._routes[path] = handler
+ 
++    def mount(self, prefix, handler):
++        if not isinstance(prefix, str) or not prefix or not prefix.startswith("/"):
++            raise ValueError(prefix)
++
++        prefix = prefix.rstrip("/") or "/"
++        self._mounts[prefix] = handler
++
+     def resolve(self, path):
++        if not isinstance(path, str) or not path or not path.startswith("/"):
++            raise ValueError(path)
++
+         try:
+             return self._routes[path]
+         except KeyError:
++            pass
++
++        matching_prefixes = (
++            prefix
++            for prefix in self._mounts
++            if prefix == "/" or path == prefix or path.startswith(prefix + "/")
++        )
++        try:
++            prefix = max(matching_prefixes, key=len)
++        except ValueError:
+             raise NotFound(path)
++
++        remainder = path[len(prefix) :] if prefix != "/" else path
++        return self._mounts[prefix], remainder or "/"
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 9770e7a..a8ca943 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -19,6 +19,13 @@ class RequirementTests(unittest.TestCase):
+         self.assertEqual(router.resolve("/api/users"), (users, "/"))
+         self.assertEqual(router.resolve("/api/users/42"), (users, "/42"))
+ 
++    def test_all_trailing_slashes_are_normalized(self):
++        router = Router()
++        mounted = object()
++        router.mount("/api///", mounted)
++        self.assertEqual(router.resolve("/api"), (mounted, "/"))
++        self.assertEqual(router.resolve("/api/items"), (mounted, "/items"))
++
+     def test_segment_boundary(self):
+         router = Router()
+         router.mount("/api", object())
+@@ -28,17 +35,19 @@ class RequirementTests(unittest.TestCase):
+     def test_root_mount_keeps_full_path_as_remainder(self):
+         router = Router()
+         root = object()
+-        router.mount("/", root)
++        router.mount("////", root)
+         self.assertEqual(router.resolve("/"), (root, "/"))
+         self.assertEqual(router.resolve("/anything"), (root, "/anything"))
+ 
+     def test_invalid_values_do_not_register(self):
+         router = Router()
+-        for prefix in (None, "", "api"):
++        existing = object()
++        router.mount("/existing", existing)
++        for prefix in (None, 1, b"/api", "", "api"):
+             with self.subTest(prefix=prefix), self.assertRaises(ValueError):
+                 router.mount(prefix, object())
+-        self.assertEqual(getattr(router, "_mounts", {}), {})
+-        for path in (None, "", "api"):
++        self.assertEqual(router._mounts, {"/existing": existing})
++        for path in (None, 1, b"/api", "", "api"):
+             with self.subTest(path=path), self.assertRaises(ValueError):
+                 router.resolve(path)
+ 

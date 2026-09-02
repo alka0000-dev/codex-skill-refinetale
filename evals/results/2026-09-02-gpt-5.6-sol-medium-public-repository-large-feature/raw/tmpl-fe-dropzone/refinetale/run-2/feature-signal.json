@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "file-input": true,
+    "drop": true
+  },
+  "all_present": true
+}

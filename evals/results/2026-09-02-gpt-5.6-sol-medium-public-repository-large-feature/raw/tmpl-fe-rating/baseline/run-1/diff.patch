@@ -1,0 +1,104 @@
+diff --git a/frontend/src/components/ui/star-rating.tsx b/frontend/src/components/ui/star-rating.tsx
+new file mode 100644
+index 0000000..094ce32
+--- /dev/null
++++ b/frontend/src/components/ui/star-rating.tsx
+@@ -0,0 +1,98 @@
++import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
++import { StarIcon } from "lucide-react"
++import * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++type StarRatingProps = Omit<
++  React.ComponentProps<typeof RadioGroupPrimitive.Root>,
++  "defaultValue" | "onValueChange" | "orientation" | "value"
++> & {
++  defaultValue?: number
++  max?: number
++  onValueChange?: (value: number) => void
++  value?: number
++}
++
++function normalizeRating(value: number, max: number) {
++  if (!Number.isFinite(value)) return 0
++
++  return Math.min(Math.max(Math.round(value), 0), max)
++}
++
++function StarRating({
++  "aria-label": ariaLabel = "Rating",
++  className,
++  defaultValue = 0,
++  disabled,
++  max = 5,
++  onPointerLeave,
++  onValueChange,
++  value,
++  ...props
++}: StarRatingProps) {
++  const starCount = Number.isFinite(max) ? Math.max(1, Math.floor(max)) : 5
++  const [uncontrolledValue, setUncontrolledValue] = React.useState(() =>
++    normalizeRating(defaultValue, starCount),
++  )
++  const [hoveredValue, setHoveredValue] = React.useState<number | null>(null)
++  const selectedValue = normalizeRating(value ?? uncontrolledValue, starCount)
++  const displayedValue = hoveredValue ?? selectedValue
++
++  function handleValueChange(nextValue: string) {
++    const nextRating = normalizeRating(Number(nextValue), starCount)
++
++    if (value === undefined) setUncontrolledValue(nextRating)
++    onValueChange?.(nextRating)
++  }
++
++  function handlePointerLeave(event: React.PointerEvent<HTMLDivElement>) {
++    setHoveredValue(null)
++    onPointerLeave?.(event)
++  }
++
++  return (
++    <RadioGroupPrimitive.Root
++      aria-label={ariaLabel}
++      data-slot="star-rating"
++      className={cn("flex w-fit items-center gap-0.5", className)}
++      disabled={disabled}
++      orientation="horizontal"
++      value={selectedValue > 0 ? String(selectedValue) : null}
++      onPointerLeave={handlePointerLeave}
++      onValueChange={handleValueChange}
++      {...props}
++    >
++      {Array.from({ length: starCount }, (_, index) => {
++        const rating = index + 1
++        const isFilled = rating <= displayedValue
++
++        return (
++          <RadioGroupPrimitive.Item
++            aria-label={`${rating} of ${starCount} stars`}
++            data-slot="star-rating-item"
++            className="rounded-sm p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
++            key={rating}
++            type="button"
++            value={String(rating)}
++            onPointerEnter={() => {
++              if (!disabled) setHoveredValue(rating)
++            }}
++          >
++            <StarIcon
++              aria-hidden="true"
++              className={cn(
++                "size-6",
++                isFilled
++                  ? "fill-yellow-400 text-yellow-400"
++                  : "fill-transparent text-muted-foreground/40",
++              )}
++            />
++          </RadioGroupPrimitive.Item>
++        )
++      })}
++    </RadioGroupPrimitive.Root>
++  )
++}
++
++export { StarRating, type StarRatingProps }

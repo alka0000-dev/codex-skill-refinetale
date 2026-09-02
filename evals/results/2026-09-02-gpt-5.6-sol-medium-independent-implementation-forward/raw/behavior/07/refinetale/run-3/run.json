@@ -1,0 +1,16 @@
+{
+  "fixture": "07",
+  "fixture_name": "07-mounted-router",
+  "mode": "refinetale",
+  "run": 3,
+  "prompt": "# Routerへのmount追加\n\n`workspace/` の完全一致routerに、path prefixによるmountを追加してください。\n\n要件:\n\n- `mount(prefix, handler)` を追加する。prefixは `/` で始まり、末尾 `/` はroot以外では正規化して扱う。\n- `resolve(path)` は完全一致routeを最優先し、なければ一致する最長のmountを選ぶ。\n- mountの一致はpath segment境界に限る。`/api` は `/api` と `/api/users` に一致するが `/apix` には一致しない。\n- mountが選ばれた場合は `(handler, remainder)` を返す。remainderはprefix自身なら `/`、子pathなら先頭 `/` を含む。\n- 完全一致routeの戻り値と、見つからない場合の `NotFound` を維持する。\n- mountのprefixまたはresolveのpathが非str、空、`/` 始まりでない場合は `ValueError`。無効mountで状態を変えない。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "f043eccb932e3d85cca731c85768c2576e6d57d0b3a027dd8284008c4fa0d4fd",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:48:31.209921+00:00",
+  "finished_at": "2026-09-02T05:51:01.982981+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "907c5aef8f105b47dce8ee85e6e0a654c3e58e59a6ce8b6c9af73b234835c1ef"
+}

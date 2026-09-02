@@ -1,0 +1,73 @@
+{
+  "summary": {
+    "candidates": 48,
+    "exact_candidate_agreements": 45,
+    "exact_candidate_agreement_rate": 0.9375,
+    "critical_agreements": 48,
+    "critical_agreement_rate": 1.0,
+    "criterion_agreements": {
+      "S1": 48,
+      "S2": 45,
+      "S3": 48,
+      "S4": 48,
+      "S5": 48
+    },
+    "criterion_agreement_rates": {
+      "S1": 1.0,
+      "S2": 0.9375,
+      "S3": 1.0,
+      "S4": 1.0,
+      "S5": 1.0
+    }
+  },
+  "disagreements": [
+    {
+      "fixture": "03",
+      "candidate": "A",
+      "differences": {
+        "S2": [
+          2,
+          1
+        ],
+        "total": [
+          10,
+          9
+        ]
+      },
+      "judge_1_evidence": "複製残高を入力順に更新するため同一口座の途中負残高を検出する。全entryの形式・型検証と試算は実状態への反映前で、不正入力・Overdraft時とも残高とauditは不変。成功時のみself.applyを順番に呼び戻り値をlist化している。追加テストはapply経路も確認し、指定unittestは終了コード0。最終回答のテスト件数表記は検証出力と不一致だが実装・成否には影響しない。",
+      "judge_2_evidence": "複製残高で同一口座を入力順に試算し、成功時はself.applyを順に使用する。残高・監査ログは事前試算中に変更されず、指定テストもexit 0。ただし形式検証と当座貸越判定が同一ループのため、先行する有効entryが当座貸越し、後続entryが不正なbatchではValueErrorではなくOverdraftが先に発生する。"
+    },
+    {
+      "fixture": "03",
+      "candidate": "B",
+      "differences": {
+        "S2": [
+          2,
+          1
+        ],
+        "total": [
+          10,
+          9
+        ]
+      },
+      "judge_1_evidence": "entriesを固定化後、全entryを型検証し、仮残高で入力順の当座貸越を判定する。事前失敗は無変更で、さらにself.apply実行中の例外にもbalancesとauditを復元する。成功時の更新境界はself.applyで順序と戻り値を維持。既存の同一口座順序・不正入力・原子性・回帰テストが終了コード0。",
+      "judge_2_evidence": "入力順の仮残高計算、boolを含む型検証、self.apply経由の更新を実装し、apply中の例外にも残高・監査ログを復元する。指定テストはexit 0。ただし形式検証と当座貸越判定が同一ループなので、後続の不正entryが先行Overdraftに隠れる場合がある。"
+    },
+    {
+      "fixture": "03",
+      "candidate": "E",
+      "differences": {
+        "S2": [
+          2,
+          1
+        ],
+        "total": [
+          10,
+          9
+        ]
+      },
+      "judge_1_evidence": "各entryを検証しながらローカルのprojected_balancesだけを入力順に更新するため、同一口座の途中Overdraftを正しく検出する。後続entryが不正でも実状態とauditは未変更。成功後はvalidated_entriesをself.apply経由で順次反映し戻り値を保持する。指定テストは終了コード0。",
+      "judge_2_evidence": "入力順の複製残高により途中当座貸越を検出し、検査失敗時は残高・監査ログを変更せず、成功時はself.applyを使用する。指定テストはexit 0。ただし形式検証と残高試算を同一ループで行うため、先行Overdraftの後に不正entryがある場合に要求されたValueErrorを返さない。"
+    }
+  ]
+}

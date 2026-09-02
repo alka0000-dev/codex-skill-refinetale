@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "search": true,
+    "keyboard": true
+  },
+  "all_present": true
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "refinetale",
+    "run": 3,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-command",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a command palette (searchable command menu) to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-datepicker",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a date picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-colorpicker",
+    "mode": "refinetale",
+    "run": 1,
+    "ticket": "Add a color picker component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-wizard",
+    "mode": "baseline",
+    "run": 3,
+    "ticket": "Add a multi-step form wizard component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "refinetale",
+    "run": 2,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-rating",
+    "mode": "baseline",
+    "run": 2,
+    "ticket": "Add a star rating input component to the frontend."
+  },
+  {
+    "task_id": "tmpl-fe-dropzone",
+    "mode": "baseline",
+    "run": 1,
+    "ticket": "Add a file upload dropzone component to the frontend."
+  }
+]

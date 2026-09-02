@@ -1,0 +1,66 @@
+diff --git a/profile_codec.py b/profile_codec.py
+index b14dcfa..722f538 100644
+--- a/profile_codec.py
++++ b/profile_codec.py
+@@ -6,24 +6,52 @@ class InvalidProfile(Exception):
+ 
+ 
+ class Profile:
+-    def __init__(self, user_id):
++    def __init__(self, user_id, display_name=None):
+         self.user_id = user_id
++        self.display_name = user_id if display_name is None else display_name
+ 
+     def __eq__(self, other):
+-        return isinstance(other, Profile) and self.user_id == other.user_id
++        return (
++            isinstance(other, Profile)
++            and self.user_id == other.user_id
++            and self.display_name == other.display_name
++        )
+ 
+ 
+ def encode(profile):
+-    return json.dumps({"version": 1, "id": profile.user_id}, sort_keys=True)
++    return json.dumps(
++        {
++            "version": 2,
++            "user_id": profile.user_id,
++            "display_name": profile.display_name,
++        },
++        sort_keys=True,
++    )
++
++
++def _require_non_empty_string(data, key):
++    value = data.get(key)
++    if not isinstance(value, str) or not value:
++        raise InvalidProfile()
++    return value
+ 
+ 
+ def decode(raw):
+     try:
+         data = json.loads(raw)
+-        if data.get("version") != 1 or not isinstance(data.get("id"), str):
++        if not isinstance(data, dict):
++            raise InvalidProfile()
++
++        version = data.get("version")
++        if type(version) is not int:
+             raise InvalidProfile()
+-        return Profile(data["id"])
+-    except (TypeError, ValueError, AttributeError) as error:
+-        if isinstance(error, InvalidProfile):
+-            raise
+-        raise InvalidProfile() from error
++        if version == 1:
++            user_id = _require_non_empty_string(data, "id")
++            return Profile(user_id)
++        if version == 2:
++            user_id = _require_non_empty_string(data, "user_id")
++            display_name = _require_non_empty_string(data, "display_name")
++            return Profile(user_id, display_name)
++        raise InvalidProfile()
++    except (TypeError, ValueError):
++        raise InvalidProfile() from None

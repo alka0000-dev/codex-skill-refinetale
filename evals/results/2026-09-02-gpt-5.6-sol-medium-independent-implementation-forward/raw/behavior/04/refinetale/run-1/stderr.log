@@ -1,0 +1,9 @@
+Reading additional input from stdin...
+2026-09-02T06:00:16.849686Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T06:00:16.849905Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T06:00:16.920736Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T06:00:16.924399Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T06:02:02.104561Z  WARN codex_sandboxing::violation: recorded sandbox violation: resource=filesystem backend=seatbelt reason=operation_not_permitted path=unknown
+2026-09-02T06:03:17.848053Z ERROR codex_core::tools::router: error=Command blocked by PreToolUse hook: 危険操作としてブロックしました: root or wildcard recursive delete。必要ならドライラン・対象範囲・復旧手順を明示してから再検討してください。. Command: rm -rf <EVAL_WORKSPACE>/__pycache__ <EVAL_WORKSPACE>/tests/__pycache__; git status --short; git check-ignore -v .agent/CONTINUITY.md 2>/dev/null || true; sed -n '1,220p' .agent/CONTINUITY.md
+2026-09-02T06:04:09.190243Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T06:04:09.227921Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a060b4-3076-7682-b7c2-72fb0c6d8da8.1788328816860751000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

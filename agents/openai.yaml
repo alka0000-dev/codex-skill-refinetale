@@ -1,0 +1,4 @@
+interface:
+  display_name: "RefineTale"
+  short_description: "共通挙動と差分を分離し、重複のない一貫した最小実装を選ぶ"
+  default_prompt: "Use $refinetale to separate invariants from real variations, keep one canonical path and representation, and implement only the smallest coherent change."

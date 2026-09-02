@@ -1,0 +1,16 @@
+{
+  "fixture": "02",
+  "fixture_name": "02-selective-retry",
+  "mode": "baseline",
+  "run": 3,
+  "prompt": "# 選択的な再試行\n\n`workspace/` の配信処理に、一時的な失敗だけを再試行する機能を追加してください。\n\n要件:\n\n- `deliver(sender, message, max_attempts=3)` の公開形を提供する。\n- `TemporaryFailure` のときだけ、合計 `max_attempts` 回まで同じsenderで再試行する。\n- 成功したら直ちに結果を返し、それ以上呼ばない。\n- `PermanentFailure` を含む他の例外は直ちにそのまま送出する。\n- `max_attempts` はboolではない正のintだけを受理し、無効ならsenderを呼ぶ前に `ValueError` にする。\n- 既存の `deliver(sender, message)` の成功時の挙動を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "1c30eb8b22bc7f152361b00d7726b9fc5fbe9a6d3ab296d5d036269fe69c478d",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:57:37.047186+00:00",
+  "finished_at": "2026-09-02T06:00:14.596422+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "2f2a0ca8a4b6b7a3a4a380762fa2cbaa83c7c5b822a9c3908341c4ddfbae8895"
+}

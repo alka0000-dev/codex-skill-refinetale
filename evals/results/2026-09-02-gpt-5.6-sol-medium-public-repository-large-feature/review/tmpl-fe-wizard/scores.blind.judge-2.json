@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepFormWizard.tsx` に3段階の進行表示、段階別のZod検証、戻る・進む操作、レビュー、完了状態、リセットが実装され、`routes/_layout/index.tsx` から実際に表示される。既存のreact-hook-form、Zod、共通UIを利用しており一貫しているが、ダッシュボードの挨拶文と見出しスタイルの変更はチケットに必須ではない小さな追加範囲。"
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 2,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` は非空タプルの`steps`を受け取る再利用可能なフォームとして、進行表示、各ステップの保持表示、Back/Next、最終submitを実装している。現ステップの検証を`querySelector`でDOM探索して`reportValidity()`する独自機構は、フォーム状態や明示的な検証APIに比べて小さな回避可能レイヤーだが、状態経路は`currentStepIndex`に集約されている。"
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 2,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepFormWizard.tsx` に3段階の入力、ステップ単位のZod検証、値の保持、Back/Continue、完了コールバック、完了画面、再開始、見出しフォーカスまで揃い、ダッシュボードにも接続されている。フォーム値はreact-hook-formに集約されている。`routes/_layout/index.tsx` の既存挨拶をオンボーディング文面へ全面変更した点は、コンポーネント追加を越える小さな追加範囲。"
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` はプロフィール入力2段階とレビュー段階、段階別検証、戻る・進む操作、進行表示、型付き完了コールバックを実装し、`routes/_layout/index.tsx` で表示と成功通知まで接続している。ステップ定義がフィールド構成と検証対象の共通ソースになり、フォーム値もreact-hook-formに一本化されている。"
+    },
+    {
+      "id": "E",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`MultiStepForm.tsx` はステップ配列と内容を受け取る汎用コンポーネントとして、進行表示、現在内容、Back/Next、最終submitを小さく実装している。検証や入力状態は利用側に委ねる明確な責務分離で、内部の遷移状態は`currentStepIndex`のみ。変更も新規コンポーネント1ファイルに限定されている。"
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`WorkspaceSetupWizard.tsx` にワークスペース入力、設定、レビューの3段階、段階別Zod検証、進行表示、戻る・進む操作、完了コールバック、完了画面、リセットが実装され、ダッシュボードに接続されている。ステップ定義、react-hook-formの値、ラベルマップがそれぞれ単一の情報源となっており、既存UI部品を一貫して利用している。"
+    }
+  ]
+}

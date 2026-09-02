@@ -1,0 +1,16 @@
+{
+  "fixture": "04",
+  "fixture_name": "04-versioned-profile",
+  "mode": "refinetale",
+  "run": 1,
+  "prompt": "# プロフィール保存形式の更新\n\n`workspace/` のプロフィールcodecを、表示名を持つ新形式へ更新してください。\n\n要件:\n\n- `encode(Profile)` は `{\"version\": 2, \"user_id\": ..., \"display_name\": ...}` をJSON化する。\n- `Profile` は `user_id` と `display_name` を持つ。新規作成時にdisplay_nameを省略した場合はuser_idを使う。\n- `decode` はversion 2を復元する。\n- 既存のversion 1 (`{\"version\":1,\"id\":...}`) も読み込み、display_nameにはidを使う。\n- version欠落、未知version、必須値の欠落または非文字列、空文字列は `InvalidProfile` にする。\n- JSON構文エラーも `InvalidProfile` とし、元の例外を外へ漏らさない。\n- `Profile(\"u\")` と既存version 1読込の互換性を維持する。\n\n`workspace/` を修正し、workspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "6316b298316b2cd9c97ef72852fe12c92e133c9d9b3f4f79b741c4c5b27c82c8",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T06:00:14.769752+00:00",
+  "finished_at": "2026-09-02T06:04:10.575570+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "557c3616c46983b7bcffd58d8c624b6ed9e41f19ee765901415f89393f17b2df"
+}

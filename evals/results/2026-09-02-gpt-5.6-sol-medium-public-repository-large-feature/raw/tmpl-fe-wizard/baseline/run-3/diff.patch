@@ -1,0 +1,503 @@
+diff --git a/frontend/src/components/Common/MultiStepFormWizard.tsx b/frontend/src/components/Common/MultiStepFormWizard.tsx
+new file mode 100644
+index 0000000..a7a2ce8
+--- /dev/null
++++ b/frontend/src/components/Common/MultiStepFormWizard.tsx
+@@ -0,0 +1,464 @@
++import { zodResolver } from "@hookform/resolvers/zod"
++import {
++  ArrowLeft,
++  ArrowRight,
++  Check,
++  CheckCircle2,
++  ClipboardCheck,
++  RotateCcw,
++  SlidersHorizontal,
++  Sparkles,
++} from "lucide-react"
++import { type FormEvent, useState } from "react"
++import { useForm } from "react-hook-form"
++import { z } from "zod"
++
++import { Button } from "@/components/ui/button"
++import {
++  Card,
++  CardContent,
++  CardDescription,
++  CardFooter,
++  CardHeader,
++  CardTitle,
++} from "@/components/ui/card"
++import { Checkbox } from "@/components/ui/checkbox"
++import {
++  Form,
++  FormControl,
++  FormDescription,
++  FormField,
++  FormItem,
++  FormLabel,
++  FormMessage,
++} from "@/components/ui/form"
++import { Input } from "@/components/ui/input"
++import {
++  Select,
++  SelectContent,
++  SelectItem,
++  SelectTrigger,
++  SelectValue,
++} from "@/components/ui/select"
++import useCustomToast from "@/hooks/useCustomToast"
++import { cn } from "@/lib/utils"
++
++const wizardFormSchema = z.object({
++  projectName: z
++    .string()
++    .trim()
++    .min(2, { message: "Enter at least 2 characters." })
++    .max(60, { message: "Keep the name under 60 characters." }),
++  projectDescription: z
++    .string()
++    .trim()
++    .max(160, { message: "Keep the description under 160 characters." }),
++  projectType: z.string().min(1, { message: "Choose a project type." }),
++  teamSize: z.string().min(1, { message: "Choose a team size." }),
++  receiveUpdates: z.boolean(),
++})
++
++type WizardFormValues = z.infer<typeof wizardFormSchema>
++type WizardFieldName = keyof WizardFormValues
++
++type WizardStep = {
++  title: string
++  shortTitle: string
++  description: string
++  fields: WizardFieldName[]
++  icon: typeof Sparkles
++}
++
++const wizardSteps: WizardStep[] = [
++  {
++    title: "Tell us about your project",
++    shortTitle: "Project",
++    description: "Start with a name and a short description.",
++    fields: ["projectName", "projectDescription"],
++    icon: Sparkles,
++  },
++  {
++    title: "Choose your preferences",
++    shortTitle: "Preferences",
++    description: "These choices help tailor your starting workspace.",
++    fields: ["projectType", "teamSize", "receiveUpdates"],
++    icon: SlidersHorizontal,
++  },
++  {
++    title: "Review your setup",
++    shortTitle: "Review",
++    description: "Make sure everything looks right before you finish.",
++    fields: [],
++    icon: ClipboardCheck,
++  },
++]
++
++const projectTypeLabels: Record<string, string> = {
++  personal: "Personal project",
++  team: "Team project",
++  client: "Client work",
++}
++
++const teamSizeLabels: Record<string, string> = {
++  solo: "Just me",
++  small: "2–5 people",
++  medium: "6–20 people",
++  large: "21+ people",
++}
++
++const defaultValues: WizardFormValues = {
++  projectName: "",
++  projectDescription: "",
++  projectType: "",
++  teamSize: "",
++  receiveUpdates: true,
++}
++
++function WizardProgress({ activeStep }: { activeStep: number }) {
++  return (
++    <nav aria-label="Setup progress" className="px-6 pt-6 sm:px-8">
++      <ol className="grid grid-cols-3">
++        {wizardSteps.map((step, index) => {
++          const isComplete = index < activeStep
++          const isActive = index === activeStep
++          const StepIcon = step.icon
++
++          return (
++            <li
++              key={step.shortTitle}
++              className="relative flex flex-col items-center gap-2 text-center"
++              aria-current={isActive ? "step" : undefined}
++            >
++              {index > 0 && (
++                <span
++                  aria-hidden="true"
++                  className={cn(
++                    "absolute right-1/2 top-5 h-px w-full -translate-y-1/2",
++                    isComplete || isActive ? "bg-primary" : "bg-border",
++                  )}
++                />
++              )}
++              <span
++                className={cn(
++                  "relative z-10 flex size-10 items-center justify-center rounded-full border bg-background transition-colors duration-200 motion-reduce:transition-none",
++                  isComplete &&
++                    "border-primary bg-primary text-primary-foreground",
++                  isActive &&
++                    "border-primary text-primary ring-4 ring-primary/10",
++                  !isComplete && !isActive && "text-muted-foreground",
++                )}
++              >
++                {isComplete ? (
++                  <Check aria-hidden="true" className="size-4" />
++                ) : (
++                  <StepIcon aria-hidden="true" className="size-4" />
++                )}
++                <span className="sr-only">
++                  {isComplete ? "Completed: " : ""}
++                  {step.shortTitle}
++                </span>
++              </span>
++              <span
++                className={cn(
++                  "hidden text-xs font-medium sm:block",
++                  isActive ? "text-foreground" : "text-muted-foreground",
++                )}
++              >
++                {step.shortTitle}
++              </span>
++            </li>
++          )
++        })}
++      </ol>
++    </nav>
++  )
++}
++
++function ProjectStep() {
++  return (
++    <div className="grid gap-5">
++      <FormField
++        name="projectName"
++        render={({ field }) => (
++          <FormItem>
++            <FormLabel>
++              Project name <span className="text-destructive">*</span>
++            </FormLabel>
++            <FormControl>
++              <Input
++                autoComplete="off"
++                placeholder="e.g. Product launch"
++                {...field}
++              />
++            </FormControl>
++            <FormDescription>This can be changed later.</FormDescription>
++            <FormMessage />
++          </FormItem>
++        )}
++      />
++      <FormField
++        name="projectDescription"
++        render={({ field }) => (
++          <FormItem>
++            <FormLabel>Description</FormLabel>
++            <FormControl>
++              <textarea
++                className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 min-h-24 w-full resize-none rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
++                placeholder="What would you like to accomplish?"
++                {...field}
++              />
++            </FormControl>
++            <div className="flex items-start justify-between gap-4">
++              <FormDescription>Optional, up to 160 characters.</FormDescription>
++              <span className="text-muted-foreground text-xs tabular-nums">
++                {field.value.length}/160
++              </span>
++            </div>
++            <FormMessage />
++          </FormItem>
++        )}
++      />
++    </div>
++  )
++}
++
++function PreferencesStep() {
++  return (
++    <div className="grid gap-5 sm:grid-cols-2">
++      <FormField
++        name="projectType"
++        render={({ field }) => (
++          <FormItem>
++            <FormLabel>
++              Project type <span className="text-destructive">*</span>
++            </FormLabel>
++            <Select onValueChange={field.onChange} value={field.value}>
++              <FormControl>
++                <SelectTrigger className="w-full">
++                  <SelectValue placeholder="Select a type" />
++                </SelectTrigger>
++              </FormControl>
++              <SelectContent>
++                <SelectItem value="personal">Personal project</SelectItem>
++                <SelectItem value="team">Team project</SelectItem>
++                <SelectItem value="client">Client work</SelectItem>
++              </SelectContent>
++            </Select>
++            <FormMessage />
++          </FormItem>
++        )}
++      />
++      <FormField
++        name="teamSize"
++        render={({ field }) => (
++          <FormItem>
++            <FormLabel>
++              Team size <span className="text-destructive">*</span>
++            </FormLabel>
++            <Select onValueChange={field.onChange} value={field.value}>
++              <FormControl>
++                <SelectTrigger className="w-full">
++                  <SelectValue placeholder="Select a size" />
++                </SelectTrigger>
++              </FormControl>
++              <SelectContent>
++                <SelectItem value="solo">Just me</SelectItem>
++                <SelectItem value="small">2–5 people</SelectItem>
++                <SelectItem value="medium">6–20 people</SelectItem>
++                <SelectItem value="large">21+ people</SelectItem>
++              </SelectContent>
++            </Select>
++            <FormMessage />
++          </FormItem>
++        )}
++      />
++      <FormField
++        name="receiveUpdates"
++        render={({ field }) => (
++          <FormItem className="sm:col-span-2">
++            <div className="bg-muted/40 flex items-start gap-3 rounded-lg border p-4">
++              <FormControl>
++                <Checkbox
++                  checked={field.value}
++                  onCheckedChange={(isChecked) =>
++                    field.onChange(isChecked === true)
++                  }
++                />
++              </FormControl>
++              <div className="grid gap-1">
++                <FormLabel>Send me setup tips</FormLabel>
++                <FormDescription>
++                  Get occasional guidance as your project takes shape.
++                </FormDescription>
++              </div>
++            </div>
++          </FormItem>
++        )}
++      />
++    </div>
++  )
++}
++
++function ReviewStep({ values }: { values: WizardFormValues }) {
++  const reviewItems = [
++    { label: "Project name", value: values.projectName },
++    {
++      label: "Description",
++      value: values.projectDescription || "No description added",
++    },
++    {
++      label: "Project type",
++      value: projectTypeLabels[values.projectType],
++    },
++    { label: "Team size", value: teamSizeLabels[values.teamSize] },
++    {
++      label: "Setup tips",
++      value: values.receiveUpdates ? "Enabled" : "Disabled",
++    },
++  ]
++
++  return (
++    <dl className="divide-y rounded-lg border">
++      {reviewItems.map((item) => (
++        <div
++          key={item.label}
++          className="grid gap-1 px-4 py-3 sm:grid-cols-[9rem_1fr] sm:gap-4"
++        >
++          <dt className="text-muted-foreground text-sm">{item.label}</dt>
++          <dd className="text-sm font-medium break-words">{item.value}</dd>
++        </div>
++      ))}
++    </dl>
++  )
++}
++
++function MultiStepFormWizard() {
++  const [activeStep, setActiveStep] = useState(0)
++  const [isComplete, setIsComplete] = useState(false)
++  const { showSuccessToast } = useCustomToast()
++  const form = useForm<WizardFormValues>({
++    resolver: zodResolver(wizardFormSchema),
++    mode: "onBlur",
++    defaultValues,
++  })
++
++  const currentStep = wizardSteps[activeStep]
++  const isLastStep = activeStep === wizardSteps.length - 1
++
++  const handleNext = async () => {
++    const isStepValid = await form.trigger(currentStep.fields, {
++      shouldFocus: true,
++    })
++
++    if (isStepValid) {
++      setActiveStep((currentActiveStep) => currentActiveStep + 1)
++    }
++  }
++
++  const handlePrevious = () => {
++    setActiveStep((currentActiveStep) => currentActiveStep - 1)
++  }
++
++  const handleSubmit = () => {
++    setIsComplete(true)
++    showSuccessToast("Your project setup is complete.")
++  }
++
++  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
++    if (!isLastStep) {
++      event.preventDefault()
++      void handleNext()
++      return
++    }
++
++    void form.handleSubmit(handleSubmit)(event)
++  }
++
++  const handleStartOver = () => {
++    form.reset(defaultValues)
++    setActiveStep(0)
++    setIsComplete(false)
++  }
++
++  if (isComplete) {
++    return (
++      <Card className="overflow-hidden">
++        <CardContent className="flex min-h-96 flex-col items-center justify-center px-6 py-12 text-center">
++          <span className="mb-5 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
++            <CheckCircle2 aria-hidden="true" className="size-8" />
++          </span>
++          <p className="text-muted-foreground mb-2 text-sm font-medium">
++            All steps complete
++          </p>
++          <h2 className="text-2xl font-semibold tracking-tight">
++            Your project is ready
++          </h2>
++          <p className="text-muted-foreground mt-2 max-w-md text-sm">
++            You finished the setup for {form.getValues("projectName")}.
++          </p>
++          <Button
++            className="mt-7"
++            type="button"
++            variant="outline"
++            onClick={handleStartOver}
++          >
++            <RotateCcw aria-hidden="true" />
++            Start over
++          </Button>
++        </CardContent>
++      </Card>
++    )
++  }
++
++  return (
++    <Card className="overflow-hidden py-0">
++      <WizardProgress activeStep={activeStep} />
++      <Form {...form}>
++        <form onSubmit={handleFormSubmit} noValidate>
++          <CardHeader
++            className="border-b px-6 pb-6 pt-7 sm:px-8"
++            aria-live="polite"
++          >
++            <p className="text-primary text-xs font-semibold tracking-wider uppercase">
++              Step {activeStep + 1} of {wizardSteps.length}
++            </p>
++            <CardTitle className="text-xl">{currentStep.title}</CardTitle>
++            <CardDescription>{currentStep.description}</CardDescription>
++          </CardHeader>
++          <CardContent
++            key={currentStep.shortTitle}
++            className="min-h-72 px-6 py-7 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-2 motion-safe:duration-200 sm:px-8"
++          >
++            {activeStep === 0 && <ProjectStep />}
++            {activeStep === 1 && <PreferencesStep />}
++            {activeStep === 2 && <ReviewStep values={form.getValues()} />}
++          </CardContent>
++          <CardFooter className="justify-between gap-3 border-t bg-muted/20 px-6 py-5 sm:px-8">
++            <Button
++              type="button"
++              variant="ghost"
++              onClick={handlePrevious}
++              disabled={activeStep === 0}
++            >
++              <ArrowLeft aria-hidden="true" />
++              Back
++            </Button>
++            {isLastStep ? (
++              <Button type="submit">
++                Complete setup
++                <Check aria-hidden="true" />
++              </Button>
++            ) : (
++              <Button type="button" onClick={handleNext}>
++                Continue
++                <ArrowRight aria-hidden="true" />
++              </Button>
++            )}
++          </CardFooter>
++        </form>
++      </Form>
++    </Card>
++  )
++}
++
++export default MultiStepFormWizard
+diff --git a/frontend/src/routes/_layout/index.tsx b/frontend/src/routes/_layout/index.tsx
+index 3e640cb..e7b37f3 100644
+--- a/frontend/src/routes/_layout/index.tsx
++++ b/frontend/src/routes/_layout/index.tsx
+@@ -1,5 +1,6 @@
+ import { createFileRoute } from "@tanstack/react-router"
+ 
++import MultiStepFormWizard from "@/components/Common/MultiStepFormWizard"
+ import useAuth from "@/hooks/useAuth"
+ 
+ export const Route = createFileRoute("/_layout/")({
+@@ -17,15 +18,18 @@ function Dashboard() {
+   const { user: currentUser } = useAuth()
+ 
+   return (
+-    <div>
++    <div className="grid gap-8">
+       <div>
+-        <h1 className="text-2xl truncate max-w-sm">
++        <h1 className="max-w-sm truncate text-2xl font-bold tracking-tight">
+           Hi, {currentUser?.full_name || currentUser?.email} 👋
+         </h1>
+         <p className="text-muted-foreground">
+-          Welcome back, nice to see you again!!!
++          Welcome back. Let&apos;s get your next project ready.
+         </p>
+       </div>
++      <div className="mx-auto w-full max-w-3xl">
++        <MultiStepFormWizard />
++      </div>
+     </div>
+   )
+ }

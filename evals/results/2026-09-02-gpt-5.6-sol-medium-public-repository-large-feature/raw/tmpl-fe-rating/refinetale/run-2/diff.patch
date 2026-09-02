@@ -1,0 +1,63 @@
+diff --git a/frontend/src/components/ui/star-rating.tsx b/frontend/src/components/ui/star-rating.tsx
+new file mode 100644
+index 0000000..3994157
+--- /dev/null
++++ b/frontend/src/components/ui/star-rating.tsx
+@@ -0,0 +1,57 @@
++import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
++import { StarIcon } from "lucide-react"
++import type * as React from "react"
++
++import { cn } from "@/lib/utils"
++
++const starRatingValues = [1, 2, 3, 4, 5] as const
++
++type StarRatingProps = Omit<
++  React.ComponentProps<typeof RadioGroupPrimitive.Root>,
++  "children" | "defaultValue" | "onValueChange" | "value"
++> & {
++  value: number
++  onValueChange: (value: number) => void
++}
++
++function StarRating({
++  className,
++  value,
++  onValueChange,
++  ...props
++}: StarRatingProps) {
++  return (
++    <RadioGroupPrimitive.Root
++      data-slot="star-rating"
++      aria-label="Rating"
++      className={cn(
++        "flex w-fit items-center gap-1 rounded-md aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
++        className
++      )}
++      value={String(value)}
++      onValueChange={(nextValue) => onValueChange(Number(nextValue))}
++      {...props}
++    >
++      {starRatingValues.map((rating) => (
++        <RadioGroupPrimitive.Item
++          type="button"
++          key={rating}
++          data-slot="star-rating-item"
++          aria-label={`${rating} out of ${starRatingValues.length} stars`}
++          className="rounded-sm p-1 text-muted-foreground transition-colors outline-none hover:text-amber-400 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
++          value={String(rating)}
++        >
++          <StarIcon
++            aria-hidden="true"
++            className={cn(
++              "size-6",
++              rating <= value && "fill-amber-400 text-amber-400"
++            )}
++          />
++        </RadioGroupPrimitive.Item>
++      ))}
++    </RadioGroupPrimitive.Root>
++  )
++}
++
++export { StarRating, type StarRatingProps }

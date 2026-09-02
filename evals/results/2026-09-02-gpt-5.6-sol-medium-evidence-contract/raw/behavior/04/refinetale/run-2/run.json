@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "04",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "$refinetale\n\n次の2つのendpointの重複を整理してください。レスポンスstatus、監査イベント名、認可、入力検証、404の条件は既存契約です。監査イベントは、対応する操作が成功した場合だけ記録してください。\n\n```ts\nexport async function archiveProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.archive(id);\n  await audit.record(\"project.archived\", id);\n  return response(204);\n}\n\nexport async function deleteProject(req: Request) {\n  await requireAdmin(req.user);\n  const id = parseProjectId(req.params.id);\n  const project = await repository.get(id);\n  if (!project) return response(404);\n  await repository.delete(id);\n  await audit.record(\"project.deleted\", id);\n  return response(204);\n}\n```",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "b1a4eb425df6651b3bc514f685eee0421a3bd3f10c68e45e5814206dda4b450b",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T03:49:39.176395+00:00",
+  "finished_at": "2026-09-02T03:50:50.752249+00:00",
+  "returncode": 0
+}

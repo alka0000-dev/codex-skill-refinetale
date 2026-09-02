@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-09-02T05:15:02.336049+00:00",
+  "codex_cli": "codex-cli 0.152.0",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "runs_per_condition": 3,
+  "jobs": 3,
+  "execution_seed": 20260902,
+  "skill_sha256": "873001ea53f54e4e924b7578d71bd721b3e5cf6cce6736a41209ca077874c7bf",
+  "fixtures": {
+    "01-billing-post-retry.md": "aee0733907e10c5afaa98ba10865834c4e3317372f4b8b3a5499faf3f23ba43f",
+    "02-clone-project-form.md": "78dbd198724eefa379c288ed18888fbc7daab1350374ed078c2b88dda05917f9",
+    "03-import-vendor-b.md": "c84ab284d8ce01ff2c95b4dac714696355ea34df85c6d54a4aefaca07ba4b899",
+    "04-cli-color-option.md": "1b5ba1bcb9b56d688c1664a285d86cdf4a4dd963c79698f5635394b88a91c332",
+    "05-orders-ndjson-export.md": "7e2e2642ed242c89b8c673aae48dc38b000307e4d47bec9317766c2c102bbbc2",
+    "06-job-duration-histogram.md": "fc76837c73fd5c63643fe0713689c0d8f24f0c73689cbd65e564dffbbb562887"
+  },
+  "notes": [
+    "Smoke runs are excluded.",
+    "Behavior baseline runs cannot discover the RefineTale project skill.",
+    "Behavior treatment runs explicitly invoke $refinetale.",
+    "All run slots are retained; failed infrastructure runs are not replaced.",
+    "Routing is outside this evaluation scope."
+  ]
+}

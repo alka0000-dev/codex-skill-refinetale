@@ -1,0 +1,318 @@
+diff --git a/frontend/src/components/Common/MultiStepForm.tsx b/frontend/src/components/Common/MultiStepForm.tsx
+new file mode 100644
+index 0000000..b6d0d8b
+--- /dev/null
++++ b/frontend/src/components/Common/MultiStepForm.tsx
+@@ -0,0 +1,272 @@
++import { zodResolver } from "@hookform/resolvers/zod"
++import { Check } from "lucide-react"
++import type { FormEvent } from "react"
++import { useState } from "react"
++import { type FieldPath, useForm } from "react-hook-form"
++import { z } from "zod"
++
++import { Button } from "@/components/ui/button"
++import {
++  Card,
++  CardContent,
++  CardDescription,
++  CardFooter,
++  CardHeader,
++  CardTitle,
++} from "@/components/ui/card"
++import {
++  Form,
++  FormControl,
++  FormField,
++  FormItem,
++  FormLabel,
++  FormMessage,
++} from "@/components/ui/form"
++import { Input } from "@/components/ui/input"
++import { cn } from "@/lib/utils"
++
++const profileSetupSchema = z.object({
++  fullName: z.string().trim().min(1, "Full name is required"),
++  email: z.email("Enter a valid email address"),
++  company: z.string().trim().min(1, "Company is required"),
++  role: z.string().trim().min(1, "Role is required"),
++})
++
++export type ProfileSetupData = z.infer<typeof profileSetupSchema>
++
++type WizardStep = {
++  title: string
++  description: string
++  fields: WizardField[]
++}
++
++type WizardField = {
++  name: FieldPath<ProfileSetupData>
++  label: string
++  placeholder: string
++  autoComplete: string
++  type?: "email" | "text"
++}
++
++const wizardSteps: WizardStep[] = [
++  {
++    title: "Your details",
++    description: "Tell us how to identify you.",
++    fields: [
++      {
++        name: "fullName",
++        label: "Full name",
++        placeholder: "Alex Morgan",
++        autoComplete: "name",
++      },
++      {
++        name: "email",
++        label: "Email",
++        placeholder: "alex@example.com",
++        autoComplete: "email",
++        type: "email",
++      },
++    ],
++  },
++  {
++    title: "Work details",
++    description: "Add a little context about your work.",
++    fields: [
++      {
++        name: "company",
++        label: "Company",
++        placeholder: "Acme Inc.",
++        autoComplete: "organization",
++      },
++      {
++        name: "role",
++        label: "Role",
++        placeholder: "Product designer",
++        autoComplete: "organization-title",
++      },
++    ],
++  },
++  {
++    title: "Review",
++    description: "Check your answers before finishing.",
++    fields: [],
++  },
++]
++
++interface MultiStepFormProps {
++  onComplete: (data: ProfileSetupData) => void
++}
++
++export function MultiStepForm({ onComplete }: MultiStepFormProps) {
++  const [currentStepIndex, setCurrentStepIndex] = useState(0)
++  const form = useForm<ProfileSetupData>({
++    resolver: zodResolver(profileSetupSchema),
++    mode: "onBlur",
++    defaultValues: {
++      fullName: "",
++      email: "",
++      company: "",
++      role: "",
++    },
++  })
++
++  const currentStep = wizardSteps[currentStepIndex]
++  const isFirstStep = currentStepIndex === 0
++  const isLastStep = currentStepIndex === wizardSteps.length - 1
++
++  const handlePrevious = () => {
++    setCurrentStepIndex((stepIndex) => stepIndex - 1)
++  }
++
++  const handleComplete = (data: ProfileSetupData) => {
++    onComplete(data)
++    form.reset()
++    setCurrentStepIndex(0)
++  }
++
++  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
++    event.preventDefault()
++
++    if (isLastStep) {
++      await form.handleSubmit(handleComplete)()
++      return
++    }
++
++    const isStepValid = await form.trigger(
++      currentStep.fields.map(({ name }) => name),
++      { shouldFocus: true },
++    )
++    if (isStepValid) {
++      setCurrentStepIndex((stepIndex) => stepIndex + 1)
++    }
++  }
++
++  const profile = form.watch()
++
++  return (
++    <Card className="w-full max-w-2xl">
++      <CardHeader>
++        <CardTitle>Set up your profile</CardTitle>
++        <CardDescription>
++          Complete the steps below to personalize your workspace.
++        </CardDescription>
++      </CardHeader>
++
++      <CardContent>
++        <nav aria-label="Profile setup progress" className="mb-8">
++          <ol className="grid grid-cols-3 gap-2">
++            {wizardSteps.map((step, stepIndex) => {
++              const isCompleted = stepIndex < currentStepIndex
++              const isCurrent = stepIndex === currentStepIndex
++
++              return (
++                <li
++                  key={step.title}
++                  aria-current={isCurrent ? "step" : undefined}
++                  className="flex min-w-0 items-center gap-2"
++                >
++                  <span
++                    className={cn(
++                      "flex size-8 shrink-0 items-center justify-center rounded-full border text-sm font-medium",
++                      (isCompleted || isCurrent) &&
++                        "border-primary bg-primary text-primary-foreground",
++                    )}
++                  >
++                    {isCompleted ? (
++                      <Check aria-hidden="true" className="size-4" />
++                    ) : (
++                      stepIndex + 1
++                    )}
++                  </span>
++                  <span
++                    className={cn(
++                      "hidden truncate text-sm sm:block",
++                      isCurrent
++                        ? "font-medium text-foreground"
++                        : "text-muted-foreground",
++                    )}
++                  >
++                    {step.title}
++                  </span>
++                </li>
++              )
++            })}
++          </ol>
++        </nav>
++
++        <div className="mb-6">
++          <p className="text-sm text-muted-foreground">
++            Step {currentStepIndex + 1} of {wizardSteps.length}
++          </p>
++          <h2 className="text-xl font-semibold">{currentStep.title}</h2>
++          <p className="text-sm text-muted-foreground">
++            {currentStep.description}
++          </p>
++        </div>
++
++        <Form {...form}>
++          <form id="profile-setup-form" onSubmit={handleSubmit}>
++            <div className="grid gap-4 sm:grid-cols-2">
++              {currentStep.fields.map((stepField) => (
++                <FormField
++                  key={stepField.name}
++                  control={form.control}
++                  name={stepField.name}
++                  render={({ field }) => (
++                    <FormItem>
++                      <FormLabel>{stepField.label}</FormLabel>
++                      <FormControl>
++                        <Input
++                          type={stepField.type ?? "text"}
++                          autoComplete={stepField.autoComplete}
++                          placeholder={stepField.placeholder}
++                          {...field}
++                        />
++                      </FormControl>
++                      <FormMessage />
++                    </FormItem>
++                  )}
++                />
++              ))}
++            </div>
++
++            {isLastStep && (
++              <dl className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-2">
++                <div>
++                  <dt className="text-sm text-muted-foreground">Full name</dt>
++                  <dd className="font-medium">{profile.fullName}</dd>
++                </div>
++                <div>
++                  <dt className="text-sm text-muted-foreground">Email</dt>
++                  <dd className="break-all font-medium">{profile.email}</dd>
++                </div>
++                <div>
++                  <dt className="text-sm text-muted-foreground">Company</dt>
++                  <dd className="font-medium">{profile.company}</dd>
++                </div>
++                <div>
++                  <dt className="text-sm text-muted-foreground">Role</dt>
++                  <dd className="font-medium">{profile.role}</dd>
++                </div>
++              </dl>
++            )}
++          </form>
++        </Form>
++      </CardContent>
++
++      <CardFooter className="justify-between border-t">
++        <Button
++          type="button"
++          variant="outline"
++          onClick={handlePrevious}
++          disabled={isFirstStep}
++        >
++          Back
++        </Button>
++        <Button type="submit" form="profile-setup-form">
++          {isLastStep ? "Complete setup" : "Continue"}
++        </Button>
++      </CardFooter>
++    </Card>
++  )
++}
+diff --git a/frontend/src/routes/_layout/index.tsx b/frontend/src/routes/_layout/index.tsx
+index 3e640cb..aa5a79a 100644
+--- a/frontend/src/routes/_layout/index.tsx
++++ b/frontend/src/routes/_layout/index.tsx
+@@ -1,6 +1,11 @@
+ import { createFileRoute } from "@tanstack/react-router"
+ 
++import {
++  MultiStepForm,
++  type ProfileSetupData,
++} from "@/components/Common/MultiStepForm"
+ import useAuth from "@/hooks/useAuth"
++import useCustomToast from "@/hooks/useCustomToast"
+ 
+ export const Route = createFileRoute("/_layout/")({
+   component: Dashboard,
+@@ -15,9 +20,14 @@ export const Route = createFileRoute("/_layout/")({
+ 
+ function Dashboard() {
+   const { user: currentUser } = useAuth()
++  const { showSuccessToast } = useCustomToast()
++
++  const handleProfileSetup = (data: ProfileSetupData) => {
++    showSuccessToast(`${data.fullName}, your profile setup is complete.`)
++  }
+ 
+   return (
+-    <div>
++    <div className="space-y-8">
+       <div>
+         <h1 className="text-2xl truncate max-w-sm">
+           Hi, {currentUser?.full_name || currentUser?.email} 👋
+@@ -26,6 +36,7 @@ function Dashboard() {
+           Welcome back, nice to see you again!!!
+         </p>
+       </div>
++      <MultiStepForm onComplete={handleProfileSetup} />
+     </div>
+   )
+ }

@@ -1,0 +1,14 @@
+{
+  "category": "behavior",
+  "fixture": "02",
+  "mode": "refinetale",
+  "run": 3,
+  "prompt": "$refinetale\n\n既存のプロジェクト作成・編集画面に「既存プロジェクトから複製して新規作成」を追加します。要件を満たす最小限の実装方針を、変更するコンポーネント、状態、API入力、初期化タイミング、テストが分かる形で示してください。必要なら短い疑似コードを使ってください。\n\n`ProjectForm.tsx`:\n\n```tsx\ntype ProjectFormProps = {\n  mode: \"create\" | \"edit\";\n  initialValues: ProjectFormValues;\n  onSubmit: (values: ProjectFormValues) => Promise<void>;\n};\n\nexport function ProjectForm(props: ProjectFormProps) {\n  const form = useProjectForm(props.initialValues);\n  return <ProjectFields form={form} submitLabel={props.mode === \"edit\" ? \"保存\" : \"作成\"} />;\n}\n```\n\n`project-routes.tsx`:\n\n```tsx\nexport function NewProjectRoute() {\n  return <ProjectForm mode=\"create\" initialValues={emptyProjectValues()} onSubmit={createProject} />;\n}\n\nexport function EditProjectRoute({ project }: { project: Project }) {\n  return <ProjectForm mode=\"edit\" initialValues={toProjectFormValues(project)} onSubmit={updateProject} />;\n}\n```\n\n`Project`には次の値がある:\n\n```ts\ntype Project = {\n  id: string;\n  name: string;\n  description: string;\n  memberRoleIds: string[];\n  notificationRules: NotificationRule[];\n  deploymentTargetId: string | null;\n  deployToken: string | null;\n  createdAt: string;\n  updatedAt: string;\n};\n```\n\n既存契約と新要件:\n\n- 複製元はroute loaderで取得してからフォームを表示する。ローディング中はフォームを表示しない。\n- 引き継ぐのは`description`、`memberRoleIds`、`notificationRules`、`deploymentTargetId`。\n- `id`、`createdAt`、`updatedAt`、`deployToken`は引き継がず、`deployToken`は画面にも初期表示しない。\n- `name`は元の名前に` (copy)`を一度だけ付ける。\n- 送信先とpayloadは通常の新規作成と同じ。更新APIや複製専用APIは追加しない。\n- validation、dirty判定、エラー表示は既存の作成・編集と共通である。\n- フォーム表示後にloaderの再検証が起きても、ユーザー入力を上書きしてはならない。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "06706c655b7a5493453ceb2ff3bfdca4763a8978698f3df61048c9c37eab8029",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:20:01.810951+00:00",
+  "finished_at": "2026-09-02T05:21:54.934806+00:00",
+  "returncode": 0
+}

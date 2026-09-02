@@ -1,0 +1,14 @@
+{
+  "category": "routing",
+  "fixture": "B",
+  "mode": "do-not-invoke",
+  "run": 1,
+  "prompt": "初心者向けに、feature flagとは何かを3文で説明してください。コード変更や設計レビューは不要です。",
+  "workspace": "<EVAL_WORKSPACE_ROOT>/treatment",
+  "prompt_sha256": "fd343d79cbb884cbab059c8fb82bc6d41da9cceb5394811fc1781dfc7e618ec5",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T03:46:31.017123+00:00",
+  "finished_at": "2026-09-02T03:46:41.820562+00:00",
+  "returncode": 0
+}

@@ -1,0 +1,16 @@
+{
+  "fixture": "01",
+  "fixture_name": "01-layered-timeout",
+  "mode": "refinetale",
+  "run": 2,
+  "prompt": "# タイムアウト設定の追加\n\n`workspace/` の小さなHTTPクライアントに、リクエスト単位のタイムアウト指定を追加してください。\n\n要件:\n\n- `Client.request(path, timeout=None)` を利用可能にする。\n- 有効なタイムアウトは正の有限な秒数（`int` または `float`。`bool` は不可）。\n- 優先順位は、リクエスト指定、`Client` 作成時の指定、既定値 `5.0` の順。\n- 明示された無効値は、下位の値へフォールバックせず `ValueError` にする。\n- transportには従来どおりpathを渡し、解決済みタイムアウトをキーワード引数 `timeout` で渡す。\n- 既存の `Client(transport)` と `request(path)` は互換に保つ。\n\n`workspace/` 内の実装を修正し、最後にworkspaceをカレントディレクトリとして `python3 -m unittest discover -s tests` を実行してください。",
+  "prompt_sha256": "21094ed8a9619c7d604d62258d76e59af8fdab322dcee94d6322b82a92cd337e",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T05:55:51.436921+00:00",
+  "finished_at": "2026-09-02T05:58:36.921015+00:00",
+  "returncode": 0,
+  "verification_returncode": 0,
+  "verification_timed_out": false,
+  "diff_sha256": "85667b7aa34a4a902cc1c937e29b4e2760ab670accb9c302970312635baa761e"
+}

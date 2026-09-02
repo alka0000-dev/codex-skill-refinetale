@@ -1,0 +1,26 @@
+{
+  "A": {
+    "mode": "baseline",
+    "run": 3
+  },
+  "B": {
+    "mode": "baseline",
+    "run": 1
+  },
+  "C": {
+    "mode": "refinetale",
+    "run": 3
+  },
+  "D": {
+    "mode": "baseline",
+    "run": 2
+  },
+  "E": {
+    "mode": "refinetale",
+    "run": 2
+  },
+  "F": {
+    "mode": "refinetale",
+    "run": 1
+  }
+}

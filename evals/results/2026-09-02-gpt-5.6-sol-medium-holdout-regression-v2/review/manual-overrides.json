@@ -1,0 +1,18 @@
+{
+  "fixture-02": {
+    "D": {
+      "changes": {
+        "S3": 2,
+        "total": 9
+      },
+      "reason": "The fixture requires appending ' (copy)' once to the source name. It does not require suppressing a suffix already present in the source name. Candidate D appends the suffix once when the initial values are created, so the judge's idempotence requirement was unsupported. The pass outcome is unchanged."
+    },
+    "E": {
+      "changes": {
+        "S3": 2,
+        "total": 9
+      },
+      "reason": "The fixture requires appending ' (copy)' once to the source name. Candidate E explicitly appends it once per clone initialization and prevents repeated appends during loader revalidation. The fixture does not require deduplicating a suffix already present in the source name. The pass outcome is unchanged."
+    }
+  }
+}

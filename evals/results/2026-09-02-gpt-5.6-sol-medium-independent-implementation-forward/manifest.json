@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-09-02T05:35:15.601870+00:00",
+  "codex_cli": "codex-cli 0.152.0",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "runs_per_condition": 3,
+  "jobs": 3,
+  "execution_seed": 20260902,
+  "skill_sha256": "873001ea53f54e4e924b7578d71bd721b3e5cf6cce6736a41209ca077874c7bf",
+  "fixtures": {
+    "01-layered-timeout": "510d7a4915e27fd1f778d0be83008a194cab1e716f34a857fefc39ca43ac25c6",
+    "02-selective-retry": "517b07bb791b024df987f13cb809d5c5df77f691650d711e685903eb5c923852",
+    "03-atomic-ledger": "713b24d5dd389eb30f641a7cf67c83d1b1064a6531919422ac01680c2f5ca185",
+    "04-versioned-profile": "cfade6e7ac9d222a58010442522af268068ff20d587a18caf0dddab148a5dbda",
+    "05-prepared-publish": "7e58daf4841274e2c5dc196694d559673118d857840b6359bd03db745d68cf5d",
+    "06-event-snapshot": "ea23870e676fe3b0742abb24a0dc620ad5853d84905e99421a60a3e5ce5bf3c0",
+    "07-mounted-router": "b90f05f2ca254cbc8a9759d20a57d305f469a40752b62b3de16c1345a392c366",
+    "08-inventory-transfer": "da028f8a84163040d1419300ebed5bb2811417f50b0e97af4488e8c401a961fa"
+  },
+  "notes": [
+    "Fixtures were frozen before the evaluated skill revision was inspected by the author.",
+    "Baseline runs cannot discover the RefineTale project skill.",
+    "Treatment runs explicitly invoke $refinetale.",
+    "Codex edits an isolated copy and the fixture verification command runs afterward.",
+    "All run slots are retained; failed infrastructure runs are not replaced."
+  ]
+}

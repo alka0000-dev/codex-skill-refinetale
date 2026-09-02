@@ -1,0 +1,12 @@
+Reading additional input from stdin...
+2026-09-02T05:44:37.355468Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:44:37.355704Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:44:37.404896Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:44:37.414381Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:44:38.212898Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:44:38.212923Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:44:38.380328Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:44:38.380352Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:45:56.224121Z ERROR codex_core::tools::router: error=Command blocked by PreToolUse hook: 危険操作としてブロックしました: root or wildcard recursive delete。必要ならドライラン・対象範囲・復旧手順を明示してから再検討してください。. Command: rm -r <EVAL_WORKSPACE>/__pycache__ <EVAL_WORKSPACE>/tests/__pycache__ && git status --short && git diff --check && sed -n '1,220p' .agent/CONTINUITY.md
+2026-09-02T05:46:30.747139Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T05:46:30.790265Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a060a5-dab9-7173-853c-e839e9f6a702.1788327877370672000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

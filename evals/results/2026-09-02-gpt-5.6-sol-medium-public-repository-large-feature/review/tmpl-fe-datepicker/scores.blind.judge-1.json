@@ -1,0 +1,58 @@
+{
+  "candidates": [
+    {
+      "id": "A",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` adds a usable native date picker by reusing the existing `Input`, fixing `type=\"date\"`, forwarding standard input props, exporting its props type, and adding only a small theme-aware color-scheme class. The frontend build passed."
+    },
+    {
+      "id": "B",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` is a focused wrapper around the repository's existing `Input`; it supplies `type=\"date\"`, forwards the remaining props, adds a component slot, and exports both the component and prop type. The frontend build passed."
+    },
+    {
+      "id": "C",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` implements the requested component through the existing `Input`. It forwards props and places `type=\"date\"` after the spread, maintaining one clear native-input behavior path. The props type is also exported, and the frontend build passed."
+    },
+    {
+      "id": "D",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` provides a functional native date picker using the existing `Input` and enforces `type=\"date\"` after forwarding props. Exporting the internal props alias is not required by the ticket. The frontend build passed."
+    },
+    {
+      "id": "E",
+      "completeness": 3,
+      "coherence": 1,
+      "scope_discipline": 1,
+      "single_path": 2,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` implements date selection, month navigation, bounds, keyboard handling, controlled and uncontrolled values, and hidden-input form submission; the frontend build passed. However, the 480-line custom calendar adds substantial unstated API and behavior such as `locale`, `weekStartsOn`, bounds, two change callbacks, Today/Clear actions, and custom focus management instead of using the existing native `Input` path. Both `onChange` and `onValueChange` are invoked for every update, creating a minor duplicate notification path."
+    },
+    {
+      "id": "F",
+      "completeness": 3,
+      "coherence": 3,
+      "scope_discipline": 3,
+      "single_path": 3,
+      "critical_failure": false,
+      "evidence": "`frontend/src/components/ui/date-picker.tsx` adds the requested component as a minimal wrapper around the existing `Input`, supplies `type=\"date\"`, forwards the statically type-omitted remaining props, and adds a component slot. The frontend build passed; a separately exported props alias was not required."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+diff --git a/frontend/src/components/Common/MultiStepForm.tsx b/frontend/src/components/Common/MultiStepForm.tsx
+new file mode 100644
+index 0000000..8ba629d
+--- /dev/null
++++ b/frontend/src/components/Common/MultiStepForm.tsx
+@@ -0,0 +1,119 @@
++import { Check } from "lucide-react"
++import { type FormEvent, type ReactNode, useState } from "react"
++
++import { Button } from "@/components/ui/button"
++import {
++  Card,
++  CardContent,
++  CardDescription,
++  CardFooter,
++  CardHeader,
++  CardTitle,
++} from "@/components/ui/card"
++import { cn } from "@/lib/utils"
++
++export interface MultiStepFormStep {
++  content: ReactNode
++  description?: string
++  title: string
++}
++
++interface MultiStepFormProps {
++  className?: string
++  onSubmit: (event: FormEvent<HTMLFormElement>) => void
++  steps: readonly [MultiStepFormStep, ...MultiStepFormStep[]]
++}
++
++const MultiStepForm = ({ className, onSubmit, steps }: MultiStepFormProps) => {
++  const [currentStepIndex, setCurrentStepIndex] = useState(0)
++  const currentStep = steps[currentStepIndex]
++  const isLastStep = currentStepIndex === steps.length - 1
++
++  const handleBack = () => {
++    setCurrentStepIndex((stepIndex) => stepIndex - 1)
++  }
++
++  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
++    event.preventDefault()
++
++    if (isLastStep) {
++      onSubmit(event)
++      return
++    }
++
++    setCurrentStepIndex((stepIndex) => stepIndex + 1)
++  }
++
++  return (
++    <Card className={cn("w-full", className)}>
++      <CardHeader className="gap-6">
++        <nav aria-label="Form progress">
++          <ol className="flex overflow-x-auto pb-2">
++            {steps.map((step, stepIndex) => {
++              const isCompleted = stepIndex < currentStepIndex
++              const isCurrent = stepIndex === currentStepIndex
++
++              return (
++                <li
++                  key={stepIndex}
++                  aria-current={isCurrent ? "step" : undefined}
++                  className={cn(
++                    "flex min-w-32 flex-1 items-start gap-3 border-t-2 pt-3",
++                    stepIndex <= currentStepIndex
++                      ? "border-primary"
++                      : "border-muted",
++                  )}
++                >
++                  <span
++                    className={cn(
++                      "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
++                      isCurrent && "bg-primary text-primary-foreground",
++                      isCompleted && "bg-primary/15 text-primary",
++                      !isCurrent &&
++                        !isCompleted &&
++                        "bg-muted text-muted-foreground",
++                    )}
++                    aria-hidden="true"
++                  >
++                    {isCompleted ? <Check className="size-4" /> : stepIndex + 1}
++                  </span>
++                  <span
++                    className={cn(
++                      "pr-4 text-sm font-medium",
++                      !isCurrent && "text-muted-foreground",
++                    )}
++                  >
++                    {step.title}
++                  </span>
++                </li>
++              )
++            })}
++          </ol>
++        </nav>
++        <div className="space-y-2" aria-live="polite">
++          <CardTitle>
++            <h2>{currentStep.title}</h2>
++          </CardTitle>
++          {currentStep.description && (
++            <CardDescription>{currentStep.description}</CardDescription>
++          )}
++        </div>
++      </CardHeader>
++      <form onSubmit={handleSubmit} aria-label={currentStep.title}>
++        <CardContent>{currentStep.content}</CardContent>
++        <CardFooter className="mt-6 justify-between border-t">
++          <div>
++            {currentStepIndex > 0 && (
++              <Button type="button" variant="outline" onClick={handleBack}>
++                Back
++              </Button>
++            )}
++          </div>
++          <Button type="submit">{isLastStep ? "Submit" : "Next"}</Button>
++        </CardFooter>
++      </form>
++    </Card>
++  )
++}
++
++export default MultiStepForm

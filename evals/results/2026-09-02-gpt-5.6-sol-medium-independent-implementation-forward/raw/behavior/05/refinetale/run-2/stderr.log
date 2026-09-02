@@ -1,0 +1,8 @@
+Reading additional input from stdin...
+2026-09-02T05:42:05.476638Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:42:05.476863Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-09-02T05:42:05.546974Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:42:05.550761Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-09-02T05:43:46.307170Z ERROR codex_core::tools::router: error=Command blocked by PreToolUse hook: 危険操作としてブロックしました: root or wildcard recursive delete。必要ならドライラン・対象範囲・復旧手順を明示してから再検討してください。. Command: rm -rf <EVAL_WORKSPACE>/__pycache__ <EVAL_WORKSPACE>/tests/__pycache__
+2026-09-02T05:44:27.392174Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: OAuth refresh credentials for server notion are missing an authorization server issuer; authorization required
+2026-09-02T05:44:27.441331Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at AbsolutePathBuf("<USER_HOME>/.codex/shell_snapshots/01a060a3-893d-71d1-b566-70d889722c20.1788327725487249000.sh"): Os { code: 2, kind: NotFound, message: "No such file or directory" }

@@ -1,0 +1,63 @@
+diff --git a/client.py b/client.py
+index 3528ffe..e244d19 100644
+--- a/client.py
++++ b/client.py
+@@ -1,6 +1,27 @@
++import math
++
++
++DEFAULT_TIMEOUT = 5.0
++
++
++def _resolve_timeout(timeout, fallback):
++    if timeout is None:
++        return fallback
++    if (
++        isinstance(timeout, bool)
++        or not isinstance(timeout, (int, float))
++        or timeout <= 0
++        or isinstance(timeout, float) and not math.isfinite(timeout)
++    ):
++        raise ValueError("timeout must be a positive finite number")
++    return timeout
++
++
+ class Client:
+-    def __init__(self, transport):
++    def __init__(self, transport, timeout=None):
+         self._transport = transport
++        self._timeout = _resolve_timeout(timeout, DEFAULT_TIMEOUT)
+ 
+-    def request(self, path):
+-        return self._transport.send(path)
++    def request(self, path, timeout=None):
++        timeout = _resolve_timeout(timeout, self._timeout)
++        return self._transport.send(path, timeout=timeout)
+diff --git a/tests/test_requirements.py b/tests/test_requirements.py
+index 6c65800..106e0f7 100644
+--- a/tests/test_requirements.py
++++ b/tests/test_requirements.py
+@@ -17,11 +17,12 @@ class RequirementTests(unittest.TestCase):
+         transport = Transport()
+         client = Client(transport, timeout=3)
+         self.assertEqual(client.request("/a", timeout=1.5), 1.5)
+-        self.assertEqual(client.request("/b"), 3)
++        self.assertEqual(client.request("/b", timeout=None), 3)
+         self.assertEqual(Client(transport).request("/c"), 5.0)
++        self.assertEqual(Client(transport, timeout=None).request("/d"), 5.0)
+ 
+     def test_invalid_explicit_values_do_not_send_or_fallback(self):
+-        for value in (0, -1, True, math.nan, math.inf):
++        for value in (0, -1, True, math.nan, math.inf, -math.inf, "1", 1 + 0j):
+             with self.subTest(value=value):
+                 transport = Transport()
+                 client = Client(transport, timeout=2)
+@@ -30,7 +31,7 @@ class RequirementTests(unittest.TestCase):
+                 self.assertEqual(transport.calls, [])
+ 
+     def test_invalid_client_value_is_rejected(self):
+-        for value in (False, 0, float("-inf")):
++        for value in (False, 0, -1, math.nan, math.inf, -math.inf, "1", 1 + 0j):
+             with self.subTest(value=value):
+                 with self.assertRaises(ValueError):
+                     Client(Transport(), timeout=value)

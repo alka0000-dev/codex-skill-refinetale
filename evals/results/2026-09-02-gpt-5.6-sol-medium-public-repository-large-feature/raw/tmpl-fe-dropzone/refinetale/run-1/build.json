@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build",
+    "--workspace",
+    "frontend"
+  ],
+  "started_at": "2026-09-02T09:27:52.573504+00:00",
+  "finished_at": "2026-09-02T09:28:09.695922+00:00",
+  "returncode": 0,
+  "timed_out": false
+}

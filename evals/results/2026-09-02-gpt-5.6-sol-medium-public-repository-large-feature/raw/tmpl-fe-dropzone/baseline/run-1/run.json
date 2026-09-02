@@ -1,0 +1,25 @@
+{
+  "task_id": "tmpl-fe-dropzone",
+  "mode": "baseline",
+  "run": 1,
+  "ticket": "Add a file upload dropzone component to the frontend.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-02T10:19:19.783176+00:00",
+  "finished_at": "2026-09-02T10:24:33.058607+00:00",
+  "returncode": 0,
+  "timed_out": false,
+  "build_passed": true,
+  "prompt_sha256": "dca6a685dc681a2ca724038e296acc1a147ab236da352e0c938d28080398045e",
+  "diff_sha256": "2c8385f3a10d6a0ac7596bebf73f50f1dfdb60ece30de45f213901e7f8ef5633",
+  "skill_trace": false,
+  "global_refinetale_trace": false,
+  "referytale_trace": false,
+  "usage": {
+    "input_tokens": 509297,
+    "cached_input_tokens": 462336,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 9443,
+    "reasoning_output_tokens": 3014
+  }
+}

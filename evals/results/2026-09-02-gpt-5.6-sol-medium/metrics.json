@@ -1,0 +1,41 @@
+{
+  "baseline": {
+    "runs": 15,
+    "passed_runs": 5,
+    "pass_rate": 0.3333,
+    "critical_failures": 2,
+    "earned_rubric_points": 76,
+    "applicable_rubric_points": 100,
+    "rubric_rate": 0.76,
+    "per_fixture_passed_runs": {
+      "01": 2,
+      "02": 2,
+      "03": 0,
+      "04": 1,
+      "05": 0
+    },
+    "skill_trace_runs": 0
+  },
+  "refinetale": {
+    "runs": 15,
+    "passed_runs": 7,
+    "pass_rate": 0.4667,
+    "critical_failures": 0,
+    "earned_rubric_points": 93,
+    "applicable_rubric_points": 99,
+    "rubric_rate": 0.9394,
+    "per_fixture_passed_runs": {
+      "01": 3,
+      "02": 3,
+      "03": 0,
+      "04": 0,
+      "05": 1
+    },
+    "skill_trace_runs": 14
+  },
+  "difference": {
+    "pass_rate": 0.1334,
+    "rubric_rate": 0.1794,
+    "critical_failures": -2
+  }
+}

@@ -1,0 +1,22 @@
+diff --git a/event_bus.py b/event_bus.py
+index a93e1e6..5e18ba2 100644
+--- a/event_bus.py
++++ b/event_bus.py
+@@ -6,8 +6,16 @@ class EventBus:
+         self._handlers.setdefault(event, []).append(handler)
+         return handler
+ 
++    def off(self, event, handler):
++        handlers = self._handlers.get(event, [])
++        try:
++            handlers.remove(handler)
++        except ValueError:
++            return False
++        return True
++
+     def emit(self, event, payload):
+         results = []
+-        for handler in self._handlers.get(event, []):
++        for handler in list(self._handlers.get(event, [])):
+             results.append(handler(payload))
+         return results
